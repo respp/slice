@@ -15,6 +15,7 @@ export interface DisputeData {
   deadline_reveal_seconds: bigint;
   assigned_jurors: string[];
   winner?: string;
+  requiredStake: bigint;
 }
 
 export function useGetDispute(disputeId: string | number) {
@@ -45,6 +46,7 @@ export function useGetDispute(disputeId: string | number) {
         deadline_reveal_seconds: d.revealDeadline,
         assigned_jurors: [], // The default 'disputes' getter does not return the array of jurors
         winner: d.winner,
+        requiredStake: d.requiredStake,
       });
     } catch (err) {
       console.error(`Error fetching dispute ${disputeId}:`, err);

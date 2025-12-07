@@ -25,9 +25,9 @@ export function useCreateDispute() {
         defenderAddress,
         category,
         BigInt(jurorsRequired),
-        BigInt(3600), // paySeconds
-        BigInt(3600), // commitSeconds
-        BigInt(3600), // revealSeconds
+        BigInt(36000), // paySeconds
+        BigInt(36000), // commitSeconds
+        BigInt(36000), // revealSeconds
       );
 
       console.log("Transaction sent:", tx.hash);
