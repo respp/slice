@@ -1,10 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DisputeCard } from "./DisputeCard";
 import { BarChartIcon } from "./icons/Icon";
 import { FilterIcon } from "./icons/BadgeIcons";
 import styles from "./DisputesList.module.css";
-import { Plus } from "lucide-react";
+import { Gavel, Eye } from "lucide-react";
+import { useSliceContract } from "@/hooks/useSliceContract";
 
 export interface Dispute {
   id: string;
@@ -91,6 +94,31 @@ const mockDisputes: Dispute[] = [
 
 export const DisputesList: React.FC = () => {
   const router = useRouter();
+  const contract = useSliceContract();
+
+  // Initialize as null so buttons are disabled by default until data loads
+  const [latestId, setLatestId] = useState<string | null>(null);
+
+  // Fetch the latest dispute ID from the contract
+  useEffect(() => {
+    const fetchLatest = async () => {
+      if (contract) {
+        try {
+          const count = await contract.disputeCount();
+          // Only enable buttons if we actually have disputes (> 0)
+          if (Number(count) > 0) {
+            setLatestId(count.toString());
+          } else {
+            setLatestId(null);
+          }
+        } catch (error) {
+          console.error("Failed to fetch dispute count", error);
+          setLatestId(null);
+        }
+      }
+    };
+    void fetchLatest();
+  }, [contract]);
 
   const handleJusticeClick = () => {
     router.push("/category-amount");
@@ -105,18 +133,54 @@ export const DisputesList: React.FC = () => {
           </div>
           <h2 className={styles.title}>My disputes:</h2>
         </div>
-        <button
-          onClick={() => router.push("/create")}
-          className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-        >
-          <span className="text-xl leading-none mb-1 text-[#1b1c23]">
-            <Plus />
-          </span>
-        </button>
-        <button className={styles.filterButton}>
-          <span>Add Filter</span>
-          <FilterIcon size={12} />
-        </button>
+
+        {/* Action Buttons Container */}
+        <div className="flex items-center gap-2">
+          {/* Vote Button */}
+          <button
+            onClick={() => latestId && router.push(`/vote/${latestId}`)}
+            disabled={!latestId}
+            className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
+              latestId
+                ? "bg-blue-50 border-blue-100 hover:bg-blue-100 cursor-pointer"
+                : "bg-gray-100 border-gray-200 opacity-50 cursor-not-allowed"
+            }`}
+            title={
+              latestId
+                ? `Vote on Dispute #${latestId}`
+                : "No disputes available"
+            }
+          >
+            <Gavel
+              className={`w-4 h-4 ${latestId ? "text-blue-600" : "text-gray-400"}`}
+            />
+          </button>
+
+          {/* Reveal Button */}
+          <button
+            onClick={() => latestId && router.push(`/reveal/${latestId}`)}
+            disabled={!latestId}
+            className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
+              latestId
+                ? "bg-purple-50 border-purple-100 hover:bg-purple-100 cursor-pointer"
+                : "bg-gray-100 border-gray-200 opacity-50 cursor-not-allowed"
+            }`}
+            title={
+              latestId
+                ? `Reveal Vote for Dispute #${latestId}`
+                : "No disputes available"
+            }
+          >
+            <Eye
+              className={`w-4 h-4 ${latestId ? "text-purple-600" : "text-gray-400"}`}
+            />
+          </button>
+
+          <button className={styles.filterButton}>
+            <span>Filter</span>
+            <FilterIcon size={12} />
+          </button>
+        </div>
       </div>
 
       <div className={styles.disputesContainer}>

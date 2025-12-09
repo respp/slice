@@ -23,7 +23,7 @@ export default function DefendantEvidencePage() {
   const isDragging = useRef(false);
 
   const handleBack = () => {
-    router.push(`/disputes/${disputeId}`);
+    router.back();
   };
 
   // Minimum distance to consider a swipe (50px)
@@ -49,30 +49,37 @@ export default function DefendantEvidencePage() {
     }
   }, []);
 
-  const onTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (!isDragging.current || !startX.current || startY.current === null) return;
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isDragging.current || !startX.current || startY.current === null)
+        return;
 
-    const touch = e.changedTouches[0];
-    const endX = touch.clientX;
-    const endY = touch.clientY;
-    const deltaX = startX.current - endX;
-    const deltaY = startY.current - endY;
+      const touch = e.changedTouches[0];
+      const endX = touch.clientX;
+      const endY = touch.clientY;
+      const deltaX = startX.current - endX;
+      const deltaY = startY.current - endY;
 
-    // Only consider horizontal swipe if horizontal movement is greater than vertical
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-      if (deltaX > 0) {
-        // Swipe left (slide left = navigate right/vote)
-        router.push(`/vote/${disputeId}`);
-      } else {
-        // Swipe right (slide right = navigate left/back)
-        router.push(`/claimant-evidence/${disputeId}`);
+      // Only consider horizontal swipe if horizontal movement is greater than vertical
+      if (
+        Math.abs(deltaX) > Math.abs(deltaY) &&
+        Math.abs(deltaX) > minSwipeDistance
+      ) {
+        if (deltaX > 0) {
+          // Swipe left (slide left = navigate right/vote)
+          router.push(`/vote/${disputeId}`);
+        } else {
+          // Swipe right (slide right = navigate left/back)
+          router.push(`/claimant-evidence/${disputeId}`);
+        }
       }
-    }
 
-    startX.current = null;
-    startY.current = null;
-    isDragging.current = false;
-  }, [router, disputeId]);
+      startX.current = null;
+      startY.current = null;
+      isDragging.current = false;
+    },
+    [router, disputeId],
+  );
 
   // Mouse events for desktop development
   const onMouseDown = useCallback((e: React.MouseEvent) => {
@@ -82,32 +89,44 @@ export default function DefendantEvidencePage() {
   }, []);
 
   const onMouseMove = useCallback(() => {
-    if (!isDragging.current || startX.current === null || startY.current === null) return;
+    if (
+      !isDragging.current ||
+      startX.current === null ||
+      startY.current === null
+    )
+      return;
   }, []);
 
-  const onMouseUp = useCallback((e: React.MouseEvent) => {
-    if (!isDragging.current || !startX.current || startY.current === null) return;
+  const onMouseUp = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging.current || !startX.current || startY.current === null)
+        return;
 
-    const endX = e.clientX;
-    const endY = e.clientY;
-    const deltaX = startX.current - endX;
-    const deltaY = startY.current - endY;
+      const endX = e.clientX;
+      const endY = e.clientY;
+      const deltaX = startX.current - endX;
+      const deltaY = startY.current - endY;
 
-    // Only consider horizontal swipe if horizontal movement is greater than vertical
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-      if (deltaX > 0) {
-        // Swipe left (slide left = navigate right/vote)
-        router.push(`/vote/${disputeId}`);
-      } else {
-        // Swipe right (slide right = navigate left/back)
-        router.push(`/claimant-evidence/${disputeId}`);
+      // Only consider horizontal swipe if horizontal movement is greater than vertical
+      if (
+        Math.abs(deltaX) > Math.abs(deltaY) &&
+        Math.abs(deltaX) > minSwipeDistance
+      ) {
+        if (deltaX > 0) {
+          // Swipe left (slide left = navigate right/vote)
+          router.push(`/vote/${disputeId}`);
+        } else {
+          // Swipe right (slide right = navigate left/back)
+          router.push(`/claimant-evidence/${disputeId}`);
+        }
       }
-    }
 
-    startX.current = null;
-    startY.current = null;
-    isDragging.current = false;
-  }, [router, disputeId]);
+      startX.current = null;
+      startY.current = null;
+      isDragging.current = false;
+    },
+    [router, disputeId],
+  );
 
   // Cleanup when component unmounts
   useEffect(() => {
@@ -209,7 +228,9 @@ export default function DefendantEvidencePage() {
         <DemandDetailSection detail={demandDetail} />
         <EvidenceCarousel images={topCarouselImages} />
         <div className="flex flex-col gap-4 mt-6">
-          <h3 className="text-lg font-bold mb-2">Evidence that demonstrates it:</h3>
+          <h3 className="text-lg font-bold mb-2">
+            Evidence that demonstrates it:
+          </h3>
           <EvidenceList evidenceList={imageEvidenceList} />
           <VideoEvidenceList evidenceList={videoEvidenceList} />
           <AudioEvidenceList audio={audioEvidence} />

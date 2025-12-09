@@ -33,7 +33,7 @@ export default function VotePage() {
   const { commitVote, revealVote, isProcessing, logs } = useSliceVoting();
 
   const handleBack = () => {
-    router.push(`/defendant-evidence/${disputeId}`);
+    router.back();
   };
 
   const handleVoteSelect = (vote: number) => {

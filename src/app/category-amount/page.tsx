@@ -17,7 +17,7 @@ export default function CategoryAmountPage() {
   const { assignDispute, isLoading } = useAssignDispute();
 
   const handleBack = () => {
-    router.push("/disputes");
+    router.back();
   };
 
   const handleSwipeComplete = async () => {
