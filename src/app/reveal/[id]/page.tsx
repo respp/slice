@@ -50,7 +50,7 @@ export default function RevealPage() {
 
   const handleBack = () => {
     // Navigates back to the evidence flow or main list
-    router.push(`/defendant-evidence/${disputeId}`);
+    router.back();
   };
 
   const handleReveal = async () => {

@@ -26,7 +26,7 @@ export default function ExecuteRulingPage() {
   const isDragging = useRef(false);
 
   const handleBack = () => {
-    router.push(`/disputes/${disputeId}`);
+    router.back();
   };
 
   const handleExecute = async () => {
@@ -57,21 +57,24 @@ export default function ExecuteRulingPage() {
   }, []);
 
   const handleBackCallback = useCallback(() => {
-    router.push(`/disputes/${disputeId}`);
-  }, [router, disputeId]);
+    router.back();
+  }, [router]);
 
-  const onTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (!isDragging.current || !startX.current) return;
-    const endX = e.changedTouches[0].clientX;
-    const deltaX = startX.current - endX;
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isDragging.current || !startX.current) return;
+      const endX = e.changedTouches[0].clientX;
+      const deltaX = startX.current - endX;
 
-    // Swipe Right -> Back
-    if (deltaX < -50) {
-      handleBackCallback();
-    }
-    isDragging.current = false;
-    startX.current = null;
-  }, [handleBackCallback]);
+      // Swipe Right -> Back
+      if (deltaX < -50) {
+        handleBackCallback();
+      }
+      isDragging.current = false;
+      startX.current = null;
+    },
+    [handleBackCallback],
+  );
 
   // --- Display Data ---
   const displayDispute = dispute

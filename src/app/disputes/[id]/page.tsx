@@ -17,7 +17,7 @@ export default function DisputeOverviewPage() {
 
   const { dispute, isLoading } = useGetDispute(disputeId);
 
-  const handleBack = () => router.push("/disputes");
+  const handleBack = () => router.back();
 
   const { handlers } = useSwipeGesture({
     onSwipeLeft: () => {
