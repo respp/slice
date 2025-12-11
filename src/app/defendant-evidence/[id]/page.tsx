@@ -228,9 +228,7 @@ export default function DefendantEvidencePage() {
         <DemandDetailSection detail={demandDetail} />
         <EvidenceCarousel images={topCarouselImages} />
         <div className="flex flex-col gap-4 mt-6">
-          <h3 className="text-lg font-bold mb-2">
-            Evidence that demonstrates it:
-          </h3>
+          <h3 className="text-md font-bold mb-2">Evidence:</h3>
           <EvidenceList evidenceList={imageEvidenceList} />
           <VideoEvidenceList evidenceList={videoEvidenceList} />
           <AudioEvidenceList audio={audioEvidence} />

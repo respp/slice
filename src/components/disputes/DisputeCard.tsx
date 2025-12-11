@@ -77,19 +77,19 @@ export const DisputeCard: React.FC<DisputeCardProps> = ({ dispute }) => {
       </div>
 
       {/* Content (Vote Section) */}
-      <div className="bg-[#f5f6f9] rounded-xl p-[22px] w-full h-[111px] flex flex-col justify-start shrink-0 box-border">
+      <div className="bg-[#f5f6f9] rounded-xl p-[22px] w-full h-16 flex flex-col justify-start shrink-0 box-border">
         <div className="flex flex-col gap-2.5 w-full flex-1">
           <div className="font-manrope font-extrabold text-xs text-[#1b1c23] tracking-[-0.24px] flex items-center gap-1.5">
             <VoteIcon size={16} color="#1b1c23" />
             Your vote was:
           </div>
-          <div className="flex gap-[11px] items-center justify-start w-full">
+          <div className="flex gap-2 items-center justify-start w-full">
             {dispute.voters.map((voter, index) => (
               <div
                 key={index}
-                className="relative w-[134px] h-[43px] bg-white rounded-lg flex items-center gap-2 p-[9px_10px] shrink-0 box-border"
+                className="relative w-32 h-4 bg-white rounded-lg flex items-center gap-2 p-[9px_10px] shrink-0 box-border"
               >
-                <div className="w-[25px] h-[25px] rounded-full overflow-hidden shrink-0 bg-[#8c8fff] flex items-center justify-center relative">
+                <div className="w-3 h-3 rounded-full overflow-hidden shrink-0 bg-[#8c8fff] flex items-center justify-center relative">
                   {voter.avatar ? (
                     <>
                       <img
