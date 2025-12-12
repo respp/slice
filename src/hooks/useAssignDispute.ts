@@ -8,6 +8,7 @@ import { sliceAddress } from "@/contracts/slice-abi";
 
 const ERC20_ABI = [
   "function approve(address spender, uint256 amount) external returns (bool)",
+  "function allowance(address owner, address spender) external view returns (uint256)",
 ];
 
 export function useAssignDispute() {
@@ -16,14 +17,22 @@ export function useAssignDispute() {
   const contract = useSliceContract();
   const { address, signer } = useXOContracts();
 
-  // 1. MATCHMAKER: Find a random active dispute ID
-  // (Logic largely remains the same, just ensures we find a valid ID)
+  // 1. MATCHMAKER: Find a random active dispute ID (Parallelized)
   const findActiveDispute = useCallback(async (): Promise<number | null> => {
     if (!contract) return null;
     setIsFinding(true);
 
     try {
-      const countBigInt = await contract.disputeCount();
+      // Retry logic for initial count fetch
+      let countBigInt = BigInt(0);
+      try {
+        countBigInt = await contract.disputeCount();
+      } catch (e) {
+        console.warn("First attempt to fetch count failed, retrying...", e);
+        await new Promise((r) => setTimeout(r, 1000));
+        countBigInt = await contract.disputeCount();
+      }
+
       const totalDisputes = Number(countBigInt);
 
       if (totalDisputes === 0) {
@@ -31,25 +40,31 @@ export function useAssignDispute() {
         return null;
       }
 
-      console.log(`Searching ${totalDisputes} disputes for active cases...`);
+      console.log(`Scanning ${totalDisputes} disputes in parallel...`);
 
-      const availableIds: number[] = [];
-
-      // Scan for Active disputes in Commit Phase
-      for (let i = 1; i <= totalDisputes; i++) {
+      // --- OPTIMIZATION: Parallel Fetching ---
+      // We create an array of promises to fetch all disputes at once
+      const disputeChecks = Array.from(
+        { length: totalDisputes },
+        (_, i) => i + 1,
+      ).map(async (id) => {
         try {
-          const d = await contract.disputes(i);
+          const d = await contract.disputes(id);
           // Status 1 = Commit Phase
           if (Number(d.status) === 1) {
-             // Optional: Check if jury is full logic could be added here
-             availableIds.push(i);
+            return id;
           }
         } catch (e) {
-          console.warn(`Skipping dispute #${i}`, e);
+          console.warn(`Skipping dispute #${id}`, e);
         }
-        // Wait for a short time before checking the next dispute
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
+        return null;
+      });
+
+      // Wait for all requests to finish
+      const results = await Promise.all(disputeChecks);
+
+      // Filter out nulls to get valid IDs
+      const availableIds = results.filter((id): id is number => id !== null);
 
       if (availableIds.length === 0) return null;
 
@@ -58,14 +73,13 @@ export function useAssignDispute() {
       return availableIds[randomIndex];
     } catch (error) {
       console.error("Error finding dispute:", error);
-      toast.error("Error searching for disputes");
       return null;
     } finally {
       setIsFinding(false);
     }
   }, [contract]);
 
-  // 2. ACTION: Join a specific dispute (Removed stakeAmountStr argument for reliability)
+  // 2. ACTION: Join a specific dispute (With Polling & Gas Fixes)
   const joinDispute = async (disputeId: number) => {
     if (!contract || !address || !signer) {
       toast.error("Wallet not connected");
@@ -75,40 +89,72 @@ export function useAssignDispute() {
     setIsLoading(true);
 
     try {
-      // --- PASO CLAVE 1: Obtener el stake requerido directamente del contrato ---
       const disputeData = await contract.disputes(disputeId);
-      const jurorStakeAmount = disputeData.jurorStake; // Esto es BigInt (ej. 50000)
+      const jurorStakeAmount = disputeData.jurorStake;
 
-      // Setup USDC Contract
       const usdcContract = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
-
-      // Usamos el BigInt directamente del contrato para la aprobación
       const amountToApprove = jurorStakeAmount;
 
-      console.log(`Approving ${amountToApprove.toString()} units for Dispute #${disputeId}`);
+      console.log(`Approving ${amountToApprove.toString()} units...`);
       toast.info("Step 1/2: Approving Stake...");
 
-      // 1. Approve (using the exact amount from the contract)
-      const approveTx = await usdcContract.approve(sliceAddress, amountToApprove);
+      // 1. Approve
+      const approveTx = await usdcContract.approve(
+        sliceAddress,
+        amountToApprove,
+      );
       await approveTx.wait();
 
-      toast.success("Stake approved! Joining jury...");
+      // --- ROBUSTNESS: Polling for Allowance ---
+      toast.info("Verifying approval...");
 
-      // 2. Call Join (No value sent)
-      const tx = await contract.joinDispute(disputeId);
+      let approved = false;
+      // Poll 10 times with 2 second intervals (Max 20s wait)
+      for (let i = 0; i < 10; i++) {
+        try {
+          const allowance = await usdcContract.allowance(address, sliceAddress);
 
+          if (allowance >= amountToApprove) {
+            approved = true;
+            break;
+          }
+        } catch (e) {
+          console.warn("Error fetching allowance during poll:", e);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+
+      if (!approved) {
+        console.warn(
+          "Allowance polling timed out, attempting transaction anyway...",
+        );
+      } else {
+        toast.success("Approval confirmed!");
+      }
+
+      // --- ROBUSTNESS: Manual Gas Limit ---
       toast.info("Confirming Jury Selection...");
-      await tx.wait();
 
-      // REMOVED: localStorage logic.
-      // The contract now updates 'jurorDisputes' mapping automatically.
+      const tx = await contract.joinDispute(disputeId, {
+        gasLimit: 250000,
+      });
+
+      await tx.wait();
 
       toast.success(`Successfully joined Dispute #${disputeId}!`);
       return true;
     } catch (error: any) {
       console.error("Error joining dispute:", error);
+
       const msg = error.reason || error.message || "Transaction failed";
-      toast.error(`Failed to join: ${msg}`);
+
+      if (msg.includes("user rejected") || msg.includes("User rejected")) {
+        toast.error("Transaction cancelled");
+      } else if (msg.includes("missing revert data")) {
+        toast.error("Network error: Please try again in 10 seconds.");
+      } else {
+        toast.error(`Failed to join: ${msg.slice(0, 50)}...`);
+      }
       return false;
     } finally {
       setIsLoading(false);
