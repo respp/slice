@@ -17,19 +17,18 @@ export function useAssignDispute() {
   const contract = useSliceContract();
   const { address, signer } = useXOContracts();
 
-  // 1. MATCHMAKER: Find a random active dispute ID
+  // 1. MATCHMAKER: Find a random active dispute ID (Parallelized)
   const findActiveDispute = useCallback(async (): Promise<number | null> => {
     if (!contract) return null;
     setIsFinding(true);
 
     try {
-      // Add a simple retry logic for the "flaky" search
+      // Retry logic for initial count fetch
       let countBigInt = BigInt(0);
       try {
         countBigInt = await contract.disputeCount();
       } catch (e) {
         console.warn("First attempt to fetch count failed, retrying...", e);
-        // Small delay before retry
         await new Promise((r) => setTimeout(r, 1000));
         countBigInt = await contract.disputeCount();
       }
@@ -41,33 +40,46 @@ export function useAssignDispute() {
         return null;
       }
 
-      const availableIds: number[] = [];
+      console.log(`Scanning ${totalDisputes} disputes in parallel...`);
 
-      for (let i = 1; i <= totalDisputes; i++) {
+      // --- OPTIMIZATION: Parallel Fetching ---
+      // We create an array of promises to fetch all disputes at once
+      const disputeChecks = Array.from(
+        { length: totalDisputes },
+        (_, i) => i + 1,
+      ).map(async (id) => {
         try {
-          const d = await contract.disputes(i);
+          const d = await contract.disputes(id);
+          // Status 1 = Commit Phase
           if (Number(d.status) === 1) {
-            availableIds.push(i);
+            return id;
           }
         } catch (e) {
-          console.warn(`Skipping dispute #${i}`, e);
+          console.warn(`Skipping dispute #${id}`, e);
         }
-      }
+        return null;
+      });
+
+      // Wait for all requests to finish
+      const results = await Promise.all(disputeChecks);
+
+      // Filter out nulls to get valid IDs
+      const availableIds = results.filter((id): id is number => id !== null);
 
       if (availableIds.length === 0) return null;
 
+      // Random Selection
       const randomIndex = Math.floor(Math.random() * availableIds.length);
       return availableIds[randomIndex];
     } catch (error) {
       console.error("Error finding dispute:", error);
-      // Don't show toast on search fail, just return null so UI handles it gracefully
       return null;
     } finally {
       setIsFinding(false);
     }
   }, [contract]);
 
-  // 2. ACTION: Join a specific dispute
+  // 2. ACTION: Join a specific dispute (With Polling & Gas Fixes)
   const joinDispute = async (disputeId: number) => {
     if (!contract || !address || !signer) {
       toast.error("Wallet not connected");
@@ -93,19 +105,40 @@ export function useAssignDispute() {
       );
       await approveTx.wait();
 
-      // Give the embedded RPC node 2 seconds to index the approval
+      // --- ROBUSTNESS: Polling for Allowance ---
       toast.info("Verifying approval...");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      toast.success("Stake approved! Joining jury...");
+      let approved = false;
+      // Poll 10 times with 2 second intervals (Max 20s wait)
+      for (let i = 0; i < 10; i++) {
+        try {
+          const allowance = await usdcContract.allowance(address, sliceAddress);
 
-      // We manually set gasLimit to bypass the simulation check (CALL_EXCEPTION)
-      // 250,000 should be plenty for a join operation
+          if (allowance >= amountToApprove) {
+            approved = true;
+            break;
+          }
+        } catch (e) {
+          console.warn("Error fetching allowance during poll:", e);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+
+      if (!approved) {
+        console.warn(
+          "Allowance polling timed out, attempting transaction anyway...",
+        );
+      } else {
+        toast.success("Approval confirmed!");
+      }
+
+      // --- ROBUSTNESS: Manual Gas Limit ---
+      toast.info("Confirming Jury Selection...");
+
       const tx = await contract.joinDispute(disputeId, {
         gasLimit: 250000,
       });
 
-      toast.info("Confirming Jury Selection...");
       await tx.wait();
 
       toast.success(`Successfully joined Dispute #${disputeId}!`);
@@ -113,13 +146,11 @@ export function useAssignDispute() {
     } catch (error: any) {
       console.error("Error joining dispute:", error);
 
-      // Better error parsing
       const msg = error.reason || error.message || "Transaction failed";
 
       if (msg.includes("user rejected") || msg.includes("User rejected")) {
         toast.error("Transaction cancelled");
       } else if (msg.includes("missing revert data")) {
-        // If it still fails with this, it's likely a fund issue or closed dispute
         toast.error("Network error: Please try again in 10 seconds.");
       } else {
         toast.error(`Failed to join: ${msg.slice(0, 50)}...`);
