@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { parseUnits, isAddress, Contract } from "ethers";
+import { parseUnits, isAddress, Contract, formatEther, formatUnits } from "ethers";
 import {
   useWriteContract,
   useWaitForTransactionReceipt,
@@ -90,8 +90,37 @@ export function useSendFunds(onSuccess?: () => void) {
             signer,
           );
 
+          // --- 🔍 DIAGNOSTIC LOGS START ---
+          console.log("--- 🕵️ DIAGNOSTIC START ---");
+
+          // 1. Check ETH Balance (for Gas)
+          const ethBalance = await signer.provider?.getBalance(await signer.getAddress());
+          console.log(`💰 ETH Balance: ${ethBalance ? formatEther(ethBalance) : 'Unknown'} ETH`);
+
+          // 2. Check USDC Balance
+          const usdcBalance = await tokenContract.balanceOf(await signer.getAddress());
+          console.log(`💵 USDC Balance: ${formatUnits(usdcBalance, 6)} USDC`);
+          console.log(`📉 Attempting to send: ${amount} USDC`);
+
+          if (usdcBalance < value) {
+            console.error("❌ INSUFFICIENT USDC FUNDS DETECTED");
+          }
+
+          // 3. Explicit Gas Estimation Log
+          console.log("⛽ Attempting Gas Estimation...");
+          try {
+            const estimatedGas = await tokenContract.transfer.estimateGas(recipient, value);
+            console.log(`✅ Gas Estimated: ${estimatedGas.toString()}`);
+          } catch (gasError: any) {
+            console.error("❌ GAS ESTIMATION FAILED:", gasError?.reason || gasError?.message);
+            console.warn("⚠️ This usually means the contract would revert (insufficient funds, paused contract, etc).");
+          }
+          console.log("--- 🕵️ DIAGNOSTIC END ---");
+          // --- 🔍 DIAGNOSTIC LOGS END ---
+
           toast.info("Sending transaction...");
-          const tx = await tokenContract.transfer(recipient, value);
+          const tx = await tokenContract.transfer(recipient, value, { gasLimit: 100000 });
+
 
           toast.info("Waiting for confirmation...");
           await tx.wait();
