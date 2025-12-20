@@ -35,7 +35,7 @@ export const SUPPORTED_CHAINS: ChainConfig[] = [
     contracts: {
       slice:
         process.env.NEXT_PUBLIC_BASE_SLICE_CONTRACT ||
-        "0xD8A10bD25e0E5dAD717372fA0C66d3a59a425e4D",
+        "0xEdCDEb4d8d7773043ADC8cA956FC9A21422D736b",
       usdc: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // Base Mainnet USDC
     },
   },

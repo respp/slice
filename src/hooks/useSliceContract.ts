@@ -1,22 +1,32 @@
+"use client";
+
 import { useMemo } from "react";
 import { Contract } from "ethers";
 import { useXOContracts } from "@/providers/XOContractsProvider";
-import { sliceAbi } from "@/contracts/slice-abi";
 import { useChainId } from "wagmi";
-import { getContractsForChain } from "@/config/contracts"; // Import your new map
+import { getContractsForChain } from "@/config/contracts";
+import { sliceAbi } from "@/contracts/slice-abi"; // Ensure this path is correct
 
 export function useSliceContract() {
   const { signer } = useXOContracts();
-  const chainId = useChainId(); // Get current connected chain
+  const chainId = useChainId();
 
   const contract = useMemo(() => {
-    if (!signer) return null;
+    // 1. Get the correct address for the current chain
+    const { sliceContract: sliceAddress } = getContractsForChain(chainId);
 
-    // Dynamically grab the address for the current chain
-    const { sliceContract } = getContractsForChain(chainId);
+    // 2. Validation: We need the Address AND the Signer
+    if (!sliceAddress || !signer) {
+      return null;
+    }
 
-    if (!sliceContract) return null;
-    return new Contract(sliceContract, sliceAbi, signer);
+    try {
+      // 3. Create the contract instance with the Signer (Write access)
+      return new Contract(sliceAddress, sliceAbi, signer);
+    } catch (error) {
+      console.error("Failed to create Slice contract instance:", error);
+      return null;
+    }
   }, [signer, chainId]);
 
   return contract;

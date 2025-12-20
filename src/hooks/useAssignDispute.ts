@@ -4,7 +4,6 @@ import { useSliceContract } from "./useSliceContract";
 import { useXOContracts } from "@/providers/XOContractsProvider";
 import { toast } from "sonner";
 import { getContractsForChain } from "@/config/contracts";
-import { sliceAddress } from "@/contracts/slice-abi";
 
 const ERC20_ABI = [
   "function approve(address spender, uint256 amount) external returns (bool)",
@@ -100,9 +99,16 @@ export function useAssignDispute() {
         const net = await signer.provider.getNetwork();
         chainId = Number(net.chainId);
       }
-      const { usdcToken } = getContractsForChain(chainId);
+
+      // Get BOTH contracts dynamically from the chain ID
+      const { usdcToken, sliceContract: sliceAddress } =
+        getContractsForChain(chainId);
 
       const usdcContract = new Contract(usdcToken, ERC20_ABI, signer);
+
+      console.log(
+        `[Join] Approving ${amountToApprove} USDC to Slice: ${sliceAddress}`,
+      );
 
       toast.info("Approving Stake...");
       const approveTx = await usdcContract.approve(

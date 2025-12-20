@@ -150,7 +150,8 @@ export default function ClaimantEvidencePage() {
     avatar: "/images/profiles-mockup/profile-1.png",
   };
 
-  const demandDetail = "I was hired to develop a React Native mobile application. The agreed milestone was a functional MVP delivered by October 1st. I delivered the code on September 28th via GitHub, but the client has refused to release the 50% remaining escrow payment, citing 'quality issues' that were never specified in our initial contract.";
+  const demandDetail =
+    "I was hired to develop a React Native mobile application. The agreed milestone was a functional MVP delivered by October 1st. I delivered the code on September 28th via GitHub, but the client has refused to release the 50% remaining escrow payment, citing 'quality issues' that were never specified in our initial contract.";
 
   // Images for the top carousel (after the demand detail)
   const topCarouselImages = [
@@ -168,22 +169,26 @@ export default function ClaimantEvidencePage() {
 
   const { dispute } = useGetDispute(disputeId);
 
-  const dynamicEvidence = (dispute?.evidence || []).map((url: string, index: number) => ({
-    id: `evidence-${index}`,
-    type: url.endsWith('.mp4') ? ('video' as const) : ('image' as const),
-    url: url,
-    description: "Evidence submitted via IPFS",
-    uploadDate: "Recently",
-    thumbnail: url.endsWith('.mp4') ? "/images/category-amount/evidencia-video.png" : undefined
-  }));
+  const dynamicEvidence = (dispute?.evidence || []).map(
+    (url: string, index: number) => ({
+      id: `evidence-${index}`,
+      type: url.endsWith(".mp4") ? ("video" as const) : ("image" as const),
+      url: url,
+      description: "Evidence submitted",
+      uploadDate: "Recently",
+      thumbnail: url.endsWith(".mp4")
+        ? "/images/category-amount/evidencia-video.png"
+        : undefined,
+    }),
+  );
 
   const imageEvidenceList = dynamicEvidence
-    .filter((e) => e.type === 'image')
-    .map(e => ({...e, type: 'image' as const}));
+    .filter((e) => e.type === "image")
+    .map((e) => ({ ...e, type: "image" as const }));
 
   const videoEvidenceList = dynamicEvidence
-    .filter((e) => e.type === 'video')
-    .map(e => ({...e, type: 'video' as const}));
+    .filter((e) => e.type === "video")
+    .map((e) => ({ ...e, type: "video" as const }));
 
   const audioEvidence = {
     id: "a1",

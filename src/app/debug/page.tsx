@@ -20,6 +20,7 @@ import {
   List,
   Clock,
   Copy,
+  Users,
 } from "lucide-react";
 
 import { useSliceContract } from "@/hooks/useSliceContract";
@@ -122,7 +123,7 @@ export default function DebugPage() {
         ipfsHash: d.ipfsHash || "None",
         winner:
           d.winner === "0x0000000000000000000000000000000000000000"
-            ? "None"
+            ? "Pending/None"
             : d.winner,
         userRole: isClaimer
           ? "Claimer"
@@ -178,16 +179,12 @@ export default function DebugPage() {
     if (!contract) return;
     try {
       toast.info("Joining jury...");
-      // Assuming mock stake for now or fetching from contract if needed
-      // For debug join we usually don't have the allowance flow here unless we replicate useAssignDispute
-      // Direct contract call for speed if allowance exists
       const tx = await contract.joinDispute(targetId);
       await tx.wait();
       toast.success("Joined successfully");
       fetchRawDispute();
       refreshGlobalState();
     } catch (e: any) {
-      // If it fails likely due to allowance, warn user
       if (e.message.includes("allowance") || e.code === "CALL_EXCEPTION") {
         toast.error("Join failed. Check USDC Allowance.");
       } else {
@@ -400,6 +397,40 @@ export default function DebugPage() {
                   <List className="w-4 h-4 text-[#1b1c23]" />
                 </a>
               )}
+            </div>
+
+            {/* --- NEW: Parties & Winner Info --- */}
+            <div className="bg-gray-50 rounded-xl border border-gray-200 p-4">
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Users className="w-3 h-3" /> Parties involved
+              </h4>
+              <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-[60px_1fr] items-center gap-2">
+                  <span className="text-[10px] font-bold text-[#1b1c23] bg-white border border-gray-100 px-1.5 py-0.5 rounded text-center">
+                    Claimer
+                  </span>
+                  <span className="font-mono text-[10px] text-gray-600 break-all select-all">
+                    {rawDisputeData.claimer}
+                  </span>
+                </div>
+                <div className="grid grid-cols-[60px_1fr] items-center gap-2">
+                  <span className="text-[10px] font-bold text-[#1b1c23] bg-white border border-gray-100 px-1.5 py-0.5 rounded text-center">
+                    Defender
+                  </span>
+                  <span className="font-mono text-[10px] text-gray-600 break-all select-all">
+                    {rawDisputeData.defender}
+                  </span>
+                </div>
+                <div className="border-t border-gray-200 my-1"></div>
+                <div className="grid grid-cols-[60px_1fr] items-center gap-2">
+                  <span className="text-[10px] font-bold text-white bg-[#8c8fff] px-1.5 py-0.5 rounded text-center">
+                    Winner
+                  </span>
+                  <span className="font-mono text-[10px] text-[#8c8fff] font-bold break-all select-all">
+                    {rawDisputeData.winner}
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Data Grid */}
