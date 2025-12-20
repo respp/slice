@@ -43,6 +43,7 @@ export default function DebugPage() {
     if (!contract || !address) return;
     try {
       const count = await contract.disputeCount();
+      // Ensure your contract has these view functions, or remove if not available
       const userDisputeIds = await contract.getUserDisputes(address);
       const jurorDisputeIds = await contract.getJurorDisputes(address);
 
@@ -51,7 +52,7 @@ export default function DebugPage() {
       setContractInfo({ count: count.toString() });
     } catch (e) {
       console.error(e);
-      toast.error("Failed to sync contract state");
+      // Fail silently for smoother UX on partial loads
     }
   }, [contract, address]);
 
@@ -68,7 +69,11 @@ export default function DebugPage() {
       const statusLabels = ["Created", "Commit", "Reveal", "Executed"];
       const isClaimer = d.claimer.toLowerCase() === address?.toLowerCase();
       const isDefender = d.defender.toLowerCase() === address?.toLowerCase();
-      const hasRevealed = await contract.hasRevealed(targetId, address);
+      // Safe check for hasRevealed
+      let hasRevealed = false;
+      try {
+        hasRevealed = await contract.hasRevealed(targetId, address);
+      } catch (e) { console.warn("hasRevealed check failed", e); }
 
       setRawDisputeData({
         id: d.id.toString(),
@@ -104,13 +109,22 @@ export default function DebugPage() {
   // --- 3. Action Handlers ---
   const handleQuickCreate = async () => {
     if (!address) return toast.error("Connect wallet");
+
+    // Customize your dummy data here
     const success = await createDispute(
-      "0x000000000000000000000000000000000000dead",
+      "0x000000000000000000000000000000000000dead", // Defender (Dead address for debug)
       "General",
-      { title: `Debug Dispute ${Date.now()}`, description: "Debug.", evidence: [] },
-      3
+      {
+        title: `Debug Dispute ${Date.now()}`,
+        description: "This is a test dispute created via the Debug Console.",
+        evidence: []
+      },
+      3 // Jurors required
     );
-    if (success) setTimeout(refreshGlobalState, 2000);
+
+    if (success) {
+      setTimeout(refreshGlobalState, 2000); // Wait for block
+    }
   };
 
   const handleJoin = async () => {
@@ -142,14 +156,11 @@ export default function DebugPage() {
 
   const handleSelectId = (id: string) => {
     setTargetId(id);
-    // Add small timeout to allow state to set before fetch if needed, 
-    // or useEffect on targetId, but simpler to just call it here:
+    // Add small timeout to visual feedback
     setTimeout(() => {
-      // We can't easily call fetchRawDispute directly with the *new* state here
-      // without a useEffect or passing ID as arg. 
-      // Better UX: User clicks, input updates, user clicks Fetch.
-      // OR: Refactor fetchRawDispute to accept an ID.
-    }, 0);
+      const btn = document.getElementById("btn-fetch");
+      if (btn) btn.click();
+    }, 100);
   }
 
   return (
@@ -169,7 +180,7 @@ export default function DebugPage() {
         </div>
         <button
           onClick={refreshGlobalState}
-          className="p-2 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors text-[#1b1c23]"
+          className="w-10 h-10 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors text-[#1b1c23] flex items-center justify-center"
         >
           <RefreshCw className="w-5 h-5" />
         </button>
@@ -183,14 +194,11 @@ export default function DebugPage() {
           myPartyDisputes={myPartyDisputes}
           myJurorDisputes={myJurorDisputes}
           targetId={targetId}
-          onSelectId={(id) => {
-            setTargetId(id);
-            // Optional: trigger fetch immediately?
-          }}
+          onSelectId={handleSelectId}
         />
 
         {/* Search Bar */}
-        <div className="bg-white p-2 rounded-[18px] border border-gray-100 shadow-sm flex items-center gap-2">
+        <div className="bg-white p-2 rounded-[18px] border border-gray-100 shadow-sm flex items-center gap-2 sticky top-[80px] z-10">
           <div className="pl-3">
             <Search className="w-5 h-5 text-gray-400" />
           </div>
@@ -198,13 +206,14 @@ export default function DebugPage() {
             type="number"
             value={targetId}
             onChange={(e) => setTargetId(e.target.value)}
-            placeholder="Dispute ID..."
+            placeholder="Enter Dispute ID..."
             className="flex-1 p-2 outline-none text-[#1b1c23] font-bold bg-transparent font-mono"
           />
           <button
+            id="btn-fetch"
             onClick={fetchRawDispute}
             disabled={isLoadingData}
-            className="bg-[#f5f6f9] text-[#1b1c23] px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-gray-200 transition-colors"
+            className="bg-[#f5f6f9] text-[#1b1c23] px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-gray-200 transition-colors min-w-[80px]"
           >
             {isLoadingData ? "..." : "Fetch"}
           </button>

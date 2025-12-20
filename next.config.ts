@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 import withPWAInit from "@ducanh2912/next-pwa";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const withPWA = withPWAInit({
   dest: "public",
+  disable: isDev,
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
@@ -13,7 +16,6 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   webpack: (config) => {
-    // Tell Webpack to ignore the React Native specific module
     config.resolve.alias = {
       ...config.resolve.alias,
       "@react-native-async-storage/async-storage": false,
