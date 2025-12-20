@@ -28,25 +28,35 @@ export function useTokenBalance(tokenAddress: string | undefined) {
 
   // --- 2. Embedded Mode (Ethers.js) ---
   const [embeddedBalance, setEmbeddedBalance] = useState<string | null>(null);
-  const [isEmbeddedLoading, setIsEmbeddedLoading] = useState(true);
+  const [embeddedSymbol, setEmbeddedSymbol] = useState<string>("USDC");
+
+  // Initialize to false to prevent "stuck" loading state when wallet isn't connected
+  const [isEmbeddedLoading, setIsEmbeddedLoading] = useState(false);
 
   useEffect(() => {
     if (!isEmbedded) return;
 
-    // If wallet isn't ready, keep loading state valid but don't error
+    // Return early if wallet is not ready.
+    // Since isEmbeddedLoading is false, this won't block the UI.
     if (!address || !signer) return;
 
-    if (!tokenAddress) {
-      setIsEmbeddedLoading(false);
-      return;
-    }
+    if (!tokenAddress) return;
 
     const fetchEmbeddedBalance = async () => {
+      setIsEmbeddedLoading(true);
       try {
         const contract = new Contract(tokenAddress, erc20Abi, signer);
-        // Assuming USDC (6 decimals); you can also fetch .decimals() if needed
-        const balance = await contract.balanceOf(address);
-        setEmbeddedBalance(formatUnits(balance, 6));
+
+        // Fetch balance, decimals, and symbol in parallel
+        const [balance, decimals, symbol] = await Promise.all([
+          contract.balanceOf(address),
+          contract.decimals(),
+          contract.symbol(),
+        ]);
+
+        // Format using the actual decimals from the contract
+        setEmbeddedBalance(formatUnits(balance, decimals));
+        setEmbeddedSymbol(symbol);
       } catch (error) {
         console.error("Failed to fetch embedded balance", error);
         setEmbeddedBalance(null);
@@ -61,13 +71,15 @@ export function useTokenBalance(tokenAddress: string | undefined) {
   // --- 3. Unified Return ---
   if (isEmbedded) {
     const isWaitingForWallet = !address || !signer;
+
     return {
       formatted: embeddedBalance,
-      symbol: "USDC",
+      symbol: embeddedSymbol,
+      // isLoading is true only if actively fetching OR waiting for wallet connection
       isLoading: isEmbeddedLoading || isWaitingForWallet,
       error: null,
       refetch: () => {
-        /* No-op for embedded currently, or implement re-trigger */
+        // Optional: Trigger re-fetch logic here if needed
       },
     };
   }
