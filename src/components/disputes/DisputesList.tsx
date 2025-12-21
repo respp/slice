@@ -8,6 +8,7 @@ import { FilterIcon } from "./icons/BadgeIcons";
 import { useConnect } from "@/providers/ConnectProvider";
 import { useSliceContract } from "@/hooks/useSliceContract";
 import { fetchJSONFromIPFS } from "@/util/ipfs";
+import { Gavel, History, Loader2 } from "lucide-react"; // Added Icons
 
 export interface Dispute {
   id: string;
@@ -87,7 +88,7 @@ export const DisputesList: React.FC = () => {
           onClick={() => setActiveTab("active")}
           className={`pb-3 text-sm font-bold transition-all ${
             activeTab === "active"
-              ? "text-[#1b1c23] border-b-2 border-[#1b1c23]"
+              ? "text-gray-800 border-b-2 border-gray-800"
               : "text-gray-400 hover:text-gray-600"
           }`}
         >
@@ -122,14 +123,32 @@ export const DisputesList: React.FC = () => {
 
       <div className="flex flex-col gap-[25px] mb-10">
         {isLoading ? (
-          <div className="text-center py-10 text-gray-400 text-xs">
-            Loading...
+          <div className="flex flex-col items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 text-[#8c8fff] animate-spin" />
+            <span className="text-xs text-gray-400 mt-2 font-bold">
+              Loading cases...
+            </span>
           </div>
         ) : displayedDisputes.length === 0 ? (
-          <div className="text-gray-400 text-sm text-center py-10 bg-gray-50 rounded-2xl border border-gray-100">
-            {activeTab === "active"
-              ? "No active cases. Check 'Inbox' for tasks or find new ones."
-              : "No history yet."}
+          /* --- MODERN EMPTY STATE --- */
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center animate-in fade-in zoom-in-95 duration-300">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-dashed border-gray-200">
+              {activeTab === "active" ? (
+                <Gavel className="w-9 h-9 text-gray-300" />
+              ) : (
+                <History className="w-9 h-9 text-gray-300" />
+              )}
+            </div>
+
+            <h3 className="text-gray-800 font-manrope font-extrabold text-base mb-1">
+              {activeTab === "active" ? "No Active Cases" : "No History Yet"}
+            </h3>
+
+            <p className="text-gray-400 text-xs font-medium max-w-[220px] leading-relaxed mx-auto">
+              {activeTab === "active"
+                ? "Check 'Inbox' for tasks or find new ones."
+                : "Past resolved cases will appear here."}
+            </p>
           </div>
         ) : (
           displayedDisputes.map((dispute) => (
@@ -140,9 +159,9 @@ export const DisputesList: React.FC = () => {
 
       <button
         onClick={() => router.push("/category-amount")}
-        className="fixed bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-[241px] h-10 bg-white text-[#1b1c23] border-2 border-[#8c8fff] rounded-[14px] shadow-lg font-bold hover:bg-[#8c8fff] hover:text-white flex items-center justify-center transition-all"
+        className="fixed bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-48 h-10 bg-white text-[#1b1c23] border-2 border-[#8c8fff] rounded-[14px] shadow-lg font-bold hover:bg-[#8c8fff] hover:text-white flex items-center justify-center transition-all"
       >
-        Do Justice, Get Paid
+        Judge &amp; Earn
       </button>
     </div>
   );

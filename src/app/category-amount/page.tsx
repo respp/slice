@@ -35,9 +35,9 @@ export default function CategoryAmountPage() {
             className="w-full h-full object-contain"
           />
         </div>
-        <h1 className="text-2xl font-bold mb-2">Select amount of money</h1>
+        <h1 className="text-2xl font-bold mb-2">Choose your stake</h1>
         <p className="text-gray-500 text-sm mb-6">
-          You&apos;ll play with users with a monetary range selection like yours
+          You&apos;ll be matched with disputes in the same reward range.{" "}
         </p>
         <AmountSelector
           selectedAmount={selectedAmount}
@@ -49,7 +49,7 @@ export default function CategoryAmountPage() {
 
       <div className="mt-auto flex justify-center pb-8">
         <SwipeButton onSwipeComplete={handleSwipeComplete}>
-          Find disputes
+          Find Disputes
         </SwipeButton>
       </div>
     </div>
