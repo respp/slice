@@ -125,21 +125,19 @@ export const DisputesList: React.FC = () => {
       <div className="flex gap-6 border-b border-gray-100 mb-6">
         <button
           onClick={() => setActiveTab("active")}
-          className={`pb-3 font-semibold transition-all ${
-            activeTab === "active"
+          className={`pb-3 font-semibold transition-all ${activeTab === "active"
               ? "text-[#1b1c23] border-b-2 border-[#1b1c23]"
               : "text-gray-400 hover:text-gray-600"
-          }`}
+            }`}
         >
           Active Cases
         </button>
         <button
           onClick={() => setActiveTab("history")}
-          className={`pb-3 font-semibold transition-all ${
-            activeTab === "history"
+          className={`pb-3 font-semibold transition-all ${activeTab === "history"
               ? "text-[#1b1c23] border-b-2 border-[#1b1c23]"
               : "text-gray-400 hover:text-gray-600"
-          }`}
+            }`}
         >
           Past History
         </button>
@@ -293,7 +291,7 @@ export const DisputesList: React.FC = () => {
         onClick={() => router.push("/category-amount")}
         className="fixed bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-[241px] h-10 bg-white text-[#1b1c23] border-2 border-[#8c8fff] rounded-[14px] shadow-lg font-bold hover:bg-[#8c8fff] hover:text-white flex items-center justify-center transition-all"
       >
-        Do Justice, Get Paid
+        Earn Judging
       </button>
     </div>
   );
