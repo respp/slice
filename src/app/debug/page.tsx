@@ -21,6 +21,7 @@ import { CryptoToolsCard } from "@/components/debug/CryptoToolsCard";
 import { NativeSendCard } from "@/components/debug/NativeSendCard";
 import { BaseRawDebugger } from "@/components/debug/BaseRawDebugger";
 import { MinimalDebugger } from "@/components/debug/MinimalDebugger";
+import { SmartDebugger } from "@/components/debug/SmartDebugger";
 
 export default function DebugPage() {
   const router = useRouter();
@@ -265,6 +266,7 @@ export default function DebugPage() {
         <NativeSendCard />
         <BaseRawDebugger />
         <MinimalDebugger />
+        <SmartDebugger />
         <CryptoToolsCard />
       </div>
     </div>
