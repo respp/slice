@@ -20,6 +20,7 @@ import { DisputeInspector } from "@/components/debug/DisputeInspector";
 import { CryptoToolsCard } from "@/components/debug/CryptoToolsCard";
 import { NativeSendCard } from "@/components/debug/NativeSendCard";
 import { BaseRawDebugger } from "@/components/debug/BaseRawDebugger";
+import { MinimalDebugger } from "@/components/debug/MinimalDebugger";
 
 export default function DebugPage() {
   const router = useRouter();
@@ -263,6 +264,7 @@ export default function DebugPage() {
 
         <NativeSendCard />
         <BaseRawDebugger />
+        <MinimalDebugger />
         <CryptoToolsCard />
       </div>
     </div>

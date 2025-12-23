@@ -100,9 +100,9 @@ export const BaseRawDebugger = () => {
   };
 
   return (
-    <div className="bg-[#0f1014] text-green-400 p-6 rounded-xl font-mono text-xs border border-gray-800 shadow-2xl">
+    <div className="bg-[#0f1014] text-indigo-400 p-6 rounded-xl font-mono text-xs border border-gray-800 shadow-2xl">
       <div className="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-        <Terminal className="w-4 h-4 text-green-500" />
+        <Terminal className="w-4 h-4 text-indigo-500" />
         <h3 className="font-bold uppercase text-white">Safe Base Debugger</h3>
       </div>
 
@@ -120,7 +120,7 @@ export const BaseRawDebugger = () => {
       <button
         onClick={handleSafeRawSend}
         disabled={isLoading || !address}
-        className="w-full py-3 bg-green-900/20 border border-green-600/50 text-green-400 rounded-lg font-bold hover:bg-green-500 hover:text-black transition-all flex justify-center gap-2 uppercase mb-4"
+        className="w-full py-3 bg-indigo-900/20 border border-indigo-600/50 text-indigo-400 rounded-lg font-bold hover:bg-indigo-500 hover:text-black transition-all flex justify-center gap-2 uppercase mb-4"
       >
         {isLoading ? (
           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
