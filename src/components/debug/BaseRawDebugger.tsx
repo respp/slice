@@ -100,30 +100,34 @@ export const BaseRawDebugger = () => {
   };
 
   return (
-    <div className="bg-[#0f1014] text-indigo-400 p-6 rounded-xl font-mono text-xs border border-gray-800 shadow-2xl">
-      <div className="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-        <Terminal className="w-4 h-4 text-indigo-500" />
-        <h3 className="font-bold uppercase text-white">Safe Base Debugger</h3>
+    <div className="bg-white rounded-[18px] p-5 shadow-sm border border-gray-100 flex flex-col gap-4 font-manrope">
+      <div className="flex items-center gap-2 border-b border-gray-50 pb-2">
+        <div className="bg-[#8c8fff]/10 p-1.5 rounded-lg">
+          <Terminal className="w-4 h-4 text-[#8c8fff]" />
+        </div>
+        <h3 className="font-extrabold text-sm text-[#1b1c23] uppercase">
+          Safe Base Debugger
+        </h3>
       </div>
 
-      <div className="mb-4 text-gray-400 space-y-1">
+      <div className="mb-1 text-gray-500 space-y-1 text-xs font-medium">
         <div className="flex justify-between">
           <span>Target:</span>
-          <span className="text-white">Base Mainnet (8453)</span>
+          <span className="text-[#1b1c23] font-bold">Base Mainnet (8453)</span>
         </div>
         <div className="flex justify-between">
           <span>Method:</span>
-          <span className="text-blue-400">provider.send()</span>
+          <span className="text-[#8c8fff] font-bold">provider.send()</span>
         </div>
       </div>
 
       <button
         onClick={handleSafeRawSend}
         disabled={isLoading || !address}
-        className="w-full py-3 bg-indigo-900/20 border border-indigo-600/50 text-indigo-400 rounded-lg font-bold hover:bg-indigo-500 hover:text-black transition-all flex justify-center gap-2 uppercase mb-4"
+        className="w-full py-3 bg-[#1b1c23] text-white rounded-xl font-bold text-xs hover:bg-[#2c2d33] active:scale-[0.98] transition-all flex justify-center gap-2 uppercase mb-1 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-gray-200"
       >
         {isLoading ? (
-          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
         ) : (
           <>
             <Play className="w-3 h-3 mt-0.5" /> Send Type-2 Tx
@@ -131,14 +135,14 @@ export const BaseRawDebugger = () => {
         )}
       </button>
 
-      <div className="bg-black p-3 rounded-lg h-48 overflow-y-auto border border-gray-800 font-mono">
+      <div className="bg-[#1b1c23] rounded-xl p-3 text-[10px] font-mono text-green-400 h-48 overflow-y-auto space-y-1 border border-gray-800 shadow-inner">
         {logs.length === 0 && (
-          <span className="text-gray-700 italic">Ready to debug...</span>
+          <span className="text-gray-500 italic">Ready to debug...</span>
         )}
         {logs.map((l, i) => (
           <div
             key={i}
-            className="mb-1 break-all border-b border-gray-900/50 pb-1 whitespace-pre-wrap"
+            className="mb-1 break-all border-b border-gray-800/50 pb-1 whitespace-pre-wrap opacity-90"
           >
             {l}
           </div>

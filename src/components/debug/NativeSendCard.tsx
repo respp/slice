@@ -42,7 +42,7 @@ export const NativeSendCard = () => {
         value: parseEther("0.000001"), // Returns a BigInt
       };
 
-      // FIX: Use safeStringify instead of JSON.stringify
+      // Use safeStringify instead of JSON.stringify
       addLog(`Payload: ${safeStringify(txPayload)}`);
 
       // 3. Send
@@ -74,23 +74,25 @@ export const NativeSendCard = () => {
   };
 
   return (
-    <div className="bg-white rounded-[18px] p-5 shadow-sm border border-indigo-100 flex flex-col gap-4">
-      <div className="flex items-center gap-2 border-b border-indigo-50 pb-2">
-        <div className="bg-indigo-50 p-1.5 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-indigo-500" />
+    <div className="bg-white rounded-[18px] p-5 shadow-sm border border-gray-100 flex flex-col gap-4 font-manrope">
+      <div className="flex items-center gap-2 border-b border-gray-50 pb-2">
+        {/* Updated Icon Container to match app theme (Purple/Indigo) */}
+        <div className="bg-[#8c8fff]/10 p-1.5 rounded-lg">
+          <AlertTriangle className="w-4 h-4 text-[#8c8fff]" />
         </div>
-        <h3 className="font-bold text-sm text-[#1b1c23]">Native Send</h3>
+        <h3 className="font-extrabold text-sm text-[#1b1c23]">Native Send</h3>
       </div>
 
-      <p className="text-xs text-gray-500">
-        Attempts to send <b>0.000001 ETH</b> to yourself. This tests the raw
-        connection, bypassing Smart Contracts.
+      <p className="text-xs text-gray-500 font-medium leading-relaxed">
+        Attempts to send <b className="text-[#1b1c23]">0.000001 ETH</b> to
+        yourself. This tests the raw connection, bypassing Smart Contracts.
       </p>
 
+      {/* Updated Button Style to match Primary Buttons (#1b1c23) */}
       <button
         onClick={handleNativeSend}
         disabled={status === "loading"}
-        className="w-full py-3 bg-indigo-500 text-white rounded-xl font-bold text-xs hover:bg-indigo-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+        className="w-full py-3 bg-[#1b1c23] text-white rounded-xl font-bold text-xs hover:bg-[#2c2d33] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-gray-200"
       >
         {status === "loading" ? (
           <Loader2 className="w-3 h-3 animate-spin" />
@@ -101,13 +103,14 @@ export const NativeSendCard = () => {
       </button>
 
       {logs.length > 0 && (
-        <div className="bg-gray-900 rounded-lg p-3 text-[10px] font-mono text-green-400 h-32 overflow-y-auto space-y-1">
+        <div className="bg-[#1b1c23] rounded-xl p-3 text-[10px] font-mono text-green-400 h-32 overflow-y-auto space-y-1 border border-gray-800 shadow-inner">
           {logs.map((log, i) => (
             <div
               key={i}
-              className="break-all border-b border-gray-800 pb-0.5 last:border-0"
+              className="break-all border-b border-gray-800/50 pb-1 last:border-0 opacity-90"
             >
-              {log}
+              <span className="opacity-50 mr-2">{">"}</span>
+              {log.split(">").pop()?.trim()}
             </div>
           ))}
         </div>

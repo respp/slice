@@ -90,42 +90,47 @@ export const MinimalDebugger = () => {
   };
 
   return (
-    <div className="bg-[#1b1c23] text-white p-6 rounded-2xl font-mono text-xs border border-gray-800 shadow-xl mt-6">
-      <div className="flex items-center gap-2 mb-4 border-b border-gray-700 pb-2">
-        <Terminal className="w-4 h-4 text-purple-400" />
-        <h3 className="font-bold uppercase">Minimal Debugger</h3>
+    <div className="bg-white rounded-[18px] p-5 shadow-sm border border-gray-100 font-manrope">
+      <div className="flex items-center gap-2 mb-4 border-b border-gray-50 pb-2">
+        <div className="bg-[#8c8fff]/10 p-1.5 rounded-lg">
+          <Terminal className="w-4 h-4 text-[#8c8fff]" />
+        </div>
+        <h3 className="font-extrabold text-sm text-[#1b1c23] uppercase">
+          Minimal Debugger
+        </h3>
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <button
           onClick={sendAuto}
           disabled={isLoading}
-          className="py-3 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition-all flex flex-col items-center gap-1"
+          className="py-3 bg-white border border-gray-200 text-gray-600 rounded-xl font-bold text-xs hover:bg-gray-50 hover:text-[#1b1c23] hover:border-gray-300 transition-all flex flex-col items-center gap-1 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
-          <Send className="w-4 h-4" />
+          <Send className="w-4 h-4 text-[#8c8fff]" />
           <span>Auto-Estimate</span>
         </button>
 
         <button
           onClick={sendHighGas}
           disabled={isLoading}
-          className="py-3 bg-purple-600/20 border border-purple-500/50 text-purple-400 rounded-lg font-bold hover:bg-purple-600 hover:text-white transition-all flex flex-col items-center gap-1"
+          className="py-3 bg-white border border-gray-200 text-gray-600 rounded-xl font-bold text-xs hover:bg-gray-50 hover:text-[#1b1c23] hover:border-gray-300 transition-all flex flex-col items-center gap-1 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
-          <Zap className="w-4 h-4" />
+          <Zap className="w-4 h-4 text-[#8c8fff]" />
           <span>High Gas (150k)</span>
         </button>
       </div>
 
-      <div className="bg-black/50 p-3 rounded-lg h-32 overflow-y-auto border border-gray-800 text-gray-300">
+      <div className="bg-[#1b1c23] rounded-xl p-3 text-[10px] font-mono text-green-400 h-32 overflow-y-auto border border-gray-800 shadow-inner">
         {logs.length === 0 && (
-          <span className="text-gray-600 italic">Waiting for input...</span>
+          <span className="text-gray-500 italic">Waiting for input...</span>
         )}
         {logs.map((l, i) => (
           <div
             key={i}
-            className="mb-1 break-all border-b border-gray-800/50 pb-1"
+            className="mb-1 break-all border-b border-gray-800/50 pb-1 opacity-90"
           >
-            {l}
+            <span className="opacity-50 mr-2">{">"}</span>
+            {l.replace(/^> /, "")}
           </div>
         ))}
       </div>

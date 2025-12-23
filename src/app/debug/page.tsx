@@ -2,7 +2,14 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, RefreshCw, Terminal, Search } from "lucide-react";
+import {
+  ArrowLeft,
+  RefreshCw,
+  Terminal,
+  Search,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { toast } from "sonner";
 import { formatUnits } from "ethers";
 
@@ -46,6 +53,9 @@ export default function DebugPage() {
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [myPartyDisputes, setMyPartyDisputes] = useState<string[]>([]);
   const [myJurorDisputes, setMyJurorDisputes] = useState<string[]>([]);
+
+  // Toggle for advanced/low-level tools
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // --- 1. Global & Context Fetching ---
   const refreshGlobalState = useCallback(async () => {
@@ -263,11 +273,31 @@ export default function DebugPage() {
           logs={logs}
         />
 
-        <NativeSendCard />
-        <BaseRawDebugger />
-        <MinimalDebugger />
-        <SmartDebugger />
-        <CryptoToolsCard />
+        {/* Separator / Toggle */}
+        <div className="flex items-center justify-center py-2">
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-[#1b1c23] transition-colors"
+          >
+            {showAdvanced ? "Hide Advanced Tools" : "Show Advanced Tools"}
+            {showAdvanced ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+
+        {/* Advanced / Low Level Tools */}
+        {showAdvanced && (
+          <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <NativeSendCard />
+            <BaseRawDebugger />
+            <MinimalDebugger />
+            <SmartDebugger />
+            <CryptoToolsCard />
+          </div>
+        )}
       </div>
     </div>
   );
