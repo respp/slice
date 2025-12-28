@@ -4,6 +4,7 @@ import { network } from "hardhat";
 import { getAddress } from "viem";
 
 describe("Slice Protocol", async function () {
+  // @ts-ignore
   const { viem } = await network.connect();
   const publicClient = await viem.getPublicClient();
   const [deployer, claimer, defender] = await viem.getWalletClients();
@@ -78,8 +79,7 @@ describe("Slice Protocol", async function () {
 
     // 4. Verify state
     const disputeData = await slice.read.disputes([1n]);
-
-    // FIX: Use dot notation instead of array index
+    // Use dot notation instead of array index
     const claimerPaid = disputeData.claimerPaid;
 
     assert.equal(claimerPaid, true, "Claimer should be marked as paid");
