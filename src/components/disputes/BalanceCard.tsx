@@ -5,7 +5,7 @@ import { useChainId } from "wagmi";
 import { useFundWallet } from "@privy-io/react-auth";
 import { RefreshCw } from "lucide-react";
 import { DepositIcon, SendIcon, ReceiveIcon } from "./icons/ActionIcons";
-import { useConnect } from "@/providers/ConnectProvider";
+import { useSliceConnect } from "@/hooks/useSliceConnect";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { SendModal } from "./SendModal";
 import { ReceiveModal } from "./ReceiveModal";
@@ -13,7 +13,7 @@ import { getContractsForChain } from "@/config/contracts";
 
 export const BalanceCard: React.FC = () => {
   const chainId = useChainId();
-  const { address } = useConnect();
+  const { address } = useSliceConnect();
 
   const { usdcToken } = getContractsForChain(chainId);
   const { formatted, loading: isLoading, refetch } = useTokenBalance(usdcToken);
@@ -37,12 +37,11 @@ export const BalanceCard: React.FC = () => {
     fundWallet({
       address,
       options: {
-        chain: { id: chainId }, // Uses the trusted chainId
+        chain: { id: chainId },
         asset: "USDC",
       },
     });
   };
-
   return (
     <>
       <div className="bg-[#1b1c23] rounded-[21px] pt-[26px] px-[28px] pb-6 mt-[50px] mx-5 w-auto min-h-[110px] flex flex-row justify-between items-end text-white box-border">
