@@ -5,25 +5,37 @@ import { useMemo, useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 
 // "juror" = disputes where I am a juror
-// "all" = all disputes (for the main list)
-type ListType = "juror" | "all";
+// "mine"  = disputes where I am a juror OR a party (Claimer/Defender)
+// "all"   = all disputes (admin/explorer view)
+type ListType = "juror" | "mine" | "all";
 
 export type Dispute = DisputeUI;
 
-export function useDisputeList(listType: ListType) {
+export function useDisputeList(
+  listType: ListType,
+  options?: { activeOnly?: boolean },
+) {
   const { address } = useAccount();
-  // 1. Get the total number of disputes OR juror disputes depending on type
-  // Note: For "juror" type, we need a separate read or logic.
-  // Assuming 'getJurorDisputes' exists on contract for now, or we filter locally.
-  // Based on previous code: ids = await contract.getJurorDisputes(address);
 
+  // 1. Fetch Juror Disputes
   const { data: jurorDisputeIds } = useReadContract({
     address: SLICE_ADDRESS,
     abi: SLICE_ABI,
     functionName: "getJurorDisputes",
     args: address ? [address] : undefined,
     query: {
-      enabled: listType === "juror" && !!address,
+      enabled: (listType === "juror" || listType === "mine") && !!address,
+    },
+  });
+
+  // 2. Fetch User Disputes (Only for "mine")
+  const { data: userDisputeIds } = useReadContract({
+    address: SLICE_ADDRESS,
+    abi: SLICE_ABI,
+    functionName: "getUserDisputes",
+    args: address ? [address] : undefined,
+    query: {
+      enabled: listType === "mine" && !!address,
     },
   });
 
@@ -31,14 +43,13 @@ export function useDisputeList(listType: ListType) {
     address: SLICE_ADDRESS,
     abi: SLICE_ABI,
     functionName: "disputeCount",
-    query: {
-      enabled: listType === "all",
-    },
+    query: { enabled: listType === "all" },
   });
 
-  // 2. Prepare the Multicall Array
+  // 3. Prepare Calls
   const calls = useMemo(() => {
     const contracts = [];
+    let idsToFetch: bigint[] = [];
 
     if (listType === "juror" && jurorDisputeIds) {
       const ids = Array.from(jurorDisputeIds as bigint[]);
@@ -52,13 +63,11 @@ export function useDisputeList(listType: ListType) {
       }
     } else if (listType === "all" && totalCount) {
       const total = Number(totalCount);
-      // Loop backwards to show newest first, limit to 20
-      const start = total; // disputeCount is length, so last index is total - 1? usually count is next ID.
-      // If count is 1, ID is 0.
-      // Let's assume count is Next ID.
-      const end = Math.max(0, start - 20);
 
-      for (let i = start - 1; i >= end; i--) {
+      const start = total;
+      const end = Math.max(1, total - 20 + 1); // Ensure we stop at 1, and get max 20 items
+
+      for (let i = start; i >= end; i--) {
         contracts.push({
           address: SLICE_ADDRESS,
           abi: SLICE_ABI,
@@ -67,30 +76,55 @@ export function useDisputeList(listType: ListType) {
         });
       }
     }
-    return contracts;
-  }, [listType, jurorDisputeIds, totalCount]);
 
-  // 3. Fetch ALL disputes in one single RPC call
+    // "juror" mode: Strictly juror IDs
+    if (listType === "juror" && jurorDisputeIds) {
+      idsToFetch = [...(jurorDisputeIds as bigint[])];
+    }
+    // "mine" mode: Juror + Party IDs
+    else if (listType === "mine") {
+      const jIds = (jurorDisputeIds as bigint[]) || [];
+      const uIds = (userDisputeIds as bigint[]) || [];
+      const uniqueIds = new Set([...jIds, ...uIds].map((id) => id.toString()));
+      idsToFetch = Array.from(uniqueIds).map((id) => BigInt(id));
+    }
+
+    // Sort descending
+    idsToFetch.sort((a, b) => Number(b) - Number(a));
+
+    for (const id of idsToFetch) {
+      contracts.push({
+        address: SLICE_ADDRESS,
+        abi: SLICE_ABI,
+        functionName: "disputes",
+        args: [id],
+      });
+    }
+
+    return contracts;
+  }, [listType, jurorDisputeIds, userDisputeIds, totalCount]);
+
+  // 4. Fetch Data
   const {
     data: results,
     isLoading: isMulticallLoading,
     refetch,
   } = useReadContracts({
     contracts: calls,
-    query: {
-      enabled: calls.length > 0,
-    },
+    query: { enabled: calls.length > 0 },
   });
 
   const [disputes, setDisputes] = useState<DisputeUI[]>([]);
   const [isProcessing, setIsProcessing] = useState(true);
 
-  // 4. Transform Results (handling async IPFS)
+  // 5. Process & Filter
   useEffect(() => {
     async function process() {
       if (!results || results.length === 0) {
-        setDisputes([]);
-        setIsProcessing(false);
+        if (!isMulticallLoading) {
+          setDisputes([]);
+          setIsProcessing(false);
+        }
         return;
       }
 
@@ -98,27 +132,24 @@ export function useDisputeList(listType: ListType) {
       const processed = await Promise.all(
         results.map(async (result) => {
           if (result.status !== "success") return null;
-
-          // We need to know the ID for this result.
-          // For 'all', it matches the reverse loop order.
-          // For 'juror', it matches the jurorDisputeIds order.
-          // However, the Struct likely contains the ID (based on adapter code: contractData.id)
-          // If the struct has the ID, we are good.
-
           return await transformDisputeData(result.result);
         }),
       );
 
-      setDisputes(processed.filter((d): d is DisputeUI => d !== null));
+      let finalDisputes = processed.filter((d): d is DisputeUI => d !== null);
+
+      // --- Filter out Finished disputes if activeOnly is true ---
+      if (options?.activeOnly) {
+        // Status 3 = Finished/Resolved
+        finalDisputes = finalDisputes.filter((d) => d.status !== 3);
+      }
+
+      setDisputes(finalDisputes);
       setIsProcessing(false);
     }
 
     process();
-  }, [results]);
+  }, [results, isMulticallLoading, options?.activeOnly]);
 
-  return {
-    disputes,
-    isLoading: isMulticallLoading || isProcessing,
-    refetch,
-  };
+  return { disputes, isLoading: isMulticallLoading || isProcessing, refetch };
 }

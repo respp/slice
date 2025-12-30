@@ -5,8 +5,10 @@ import {
   Wallet,
   CheckCircle2,
   XCircle,
-  FileText,
   ArrowRight,
+  Gavel,
+  Lock,
+  Archive,
 } from "lucide-react";
 import type { Dispute } from "@/hooks/useDisputeList";
 
@@ -25,9 +27,7 @@ type DisputeUI = Dispute & {
   voters?: Array<{ isMe: boolean; vote: number }>;
 };
 
-// Define constants for readability
 const VOTE_APPROVE = 1;
-// const VOTE_REJECT = 2;
 
 export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
   const router = useRouter();
@@ -42,10 +42,17 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
     router.push(`/execute-ruling/${dispute.id}`);
   };
 
-  const isReadyForWithdrawal = dispute.status === 2;
+  // Status mapping from Contract/Adapter
+  // 0: Created, 1: Commit (Voting), 2: Reveal, 3: Finished
+  const isVoting = dispute.status === 1;
+  const isReveal = dispute.status === 2;
+  const isFinished = dispute.status === 3;
 
-  // Mock logic to find user's vote
-  // Ensure we handle the case where voters might be undefined
+  // Check if "Execute Ruling" button should appear (Status 2 + time passed, handled by hook usually, but simplified here)
+  const isReadyForWithdrawal =
+    dispute.status === 2 && dispute.phase === "WITHDRAW";
+
+  // Find user's vote if available
   const myVote = dispute.voters?.find((v) => v.isMe)?.vote;
 
   return (
@@ -55,7 +62,6 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
     >
       {/* 1. Header Section */}
       <div className="flex items-start gap-4">
-        {/* Icon Box */}
         <div className="w-[52px] h-[52px] shrink-0 rounded-2xl bg-[#8c8fff]/10 border border-[#8c8fff]/20 flex items-center justify-center overflow-hidden">
           {dispute.icon ? (
             <img
@@ -72,7 +78,6 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
           )}
         </div>
 
-        {/* Title & Tags */}
         <div className="flex-1 min-w-0 flex flex-col gap-2">
           <h3 className="font-manrope font-extrabold text-[15px] text-[#1b1c23] leading-tight truncate pr-2 group-hover:text-[#8c8fff] transition-colors">
             {dispute.title}
@@ -85,20 +90,23 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
                 {dispute.category}
               </span>
             </div>
-
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F5F6F9] border border-gray-100">
-              <PersonIcon size={10} color="#8c8fff" />
-              <span className="font-manrope font-bold text-[10px] text-[#1b1c23] tracking-wide">
-                {dispute.votesCount}/{dispute.totalVotes} votes
-              </span>
-            </div>
+            {/* Show Vote Count only if active */}
+            {!isFinished && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F5F6F9] border border-gray-100">
+                <PersonIcon size={10} color="#8c8fff" />
+                <span className="font-manrope font-bold text-[10px] text-[#1b1c23] tracking-wide">
+                  {dispute.votesCount || 0}/{dispute.jurorsRequired} jurors
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* 2. Vote Status / Context Area */}
+      {/* 2. Status / Context Area */}
       <div className="bg-[#F8F9FC] rounded-xl p-4 flex items-center gap-3 border border-gray-50">
-        {myVote !== undefined ? ( // Check if myVote exists (is not undefined)
+        {/* CASE A: User Voted */}
+        {myVote !== undefined ? (
           <>
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
@@ -125,16 +133,29 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
             </div>
           </>
         ) : (
+          /* CASE B: User Didn't Vote (Check Status!) */
           <>
             <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0 text-gray-400">
-              <FileText size={16} />
+              {isFinished ? (
+                <Archive size={16} />
+              ) : isReveal ? (
+                <Lock size={16} />
+              ) : (
+                <Gavel size={16} />
+              )}
             </div>
             <div>
               <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                 Status
               </span>
               <span className="text-xs font-bold text-[#1b1c23]">
-                Waiting for your judgment
+                {isFinished
+                  ? "Case Resolved"
+                  : isReveal
+                    ? "Reveal Phase In Progress"
+                    : isVoting
+                      ? "Voting In Progress"
+                      : "Waiting for judgment"}
               </span>
             </div>
           </>
@@ -146,7 +167,7 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
         <div className="flex items-center gap-1.5">
           <StarIcon size={14} color="#8c8fff" />
           <span className="font-manrope font-bold text-xs text-[#8c8fff]">
-            {dispute.prize}
+            {dispute.stake} USDC
           </span>
         </div>
 

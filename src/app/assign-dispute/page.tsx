@@ -9,7 +9,7 @@ import { CategoryAmountHeader } from "@/components/category-amount/CategoryAmoun
 export default function AssignDisputePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const amount = searchParams.get("amount") || "0.00005";
+  const amount = searchParams.get("amount");
 
   // Destructure isReady from our hook
   const { findActiveDispute, isReady } = useAssignDispute();

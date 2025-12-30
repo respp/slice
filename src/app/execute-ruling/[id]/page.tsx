@@ -6,16 +6,10 @@ import { useGetDispute } from "@/hooks/useGetDispute";
 import { useExecuteRuling } from "@/hooks/useExecuteRuling";
 import { SuccessAnimation } from "@/components/SuccessAnimation";
 import { useSwipeGesture } from "@/hooks/useSwipeGesture";
-import {
-  Loader2,
-  ArrowLeft,
-  Wallet,
-  Trophy,
-  Coins,
-  ArrowRight,
-} from "lucide-react";
+import { Loader2, Wallet, Trophy, Coins, Gavel } from "lucide-react";
 import { toast } from "sonner";
 import { PaginationDots } from "@/components/dispute-overview/PaginationDots";
+import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 
 export default function ExecuteRulingPage() {
   const router = useRouter();
@@ -46,7 +40,11 @@ export default function ExecuteRulingPage() {
 
   const handleAnimationComplete = () => {
     setShowSuccess(false);
-    router.push("/disputes"); // Or profile to see updated balance
+    // Redirect to profile where the Withdraw button lives
+    toast.info(
+      "Ruling executed! You can now withdraw your funds from your Profile.",
+    );
+    router.push("/profile");
   };
 
   // --- Logic: Mock Reward Calculation ---
@@ -63,18 +61,11 @@ export default function ExecuteRulingPage() {
       {...handlers}
     >
       {/* 1. Header (Transparent & Clean) */}
-      <div className="pt-6 px-6 pb-2 flex items-center justify-between z-10">
-        <button
-          onClick={() => router.back()}
-          className="w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 transition-transform"
-        >
-          <ArrowLeft className="w-5 h-5 text-[#1b1c23]" />
-        </button>
-        <span className="text-xs font-bold text-gray-600 uppercase tracking-widest">
-          Ruling Phase
-        </span>
-        <div className="w-10" /> {/* Spacer for centering */}
-      </div>
+      <DisputeOverviewHeader
+        onBack={() => router.back()}
+        title="Ruling Phase"
+        className="pt-6"
+      />
 
       <div className="flex-1 overflow-y-auto px-6 pb-40 flex flex-col pt-4">
         {/* 2. Hero Section: The "Bag" */}
@@ -89,12 +80,12 @@ export default function ExecuteRulingPage() {
           </div>
 
           <h1 className="text-2xl font-extrabold text-[#1b1c23] mb-2 leading-tight">
-            {isFinished ? "Rewards Claimed" : "Funds Ready to Withdraw"}
+            {isFinished ? "Ruling Executed" : "Finalize Ruling"}
           </h1>
           <p className="text-sm text-gray-500 font-medium max-w-[260px]">
             {isFinished
-              ? "The ruling has been executed and funds have been distributed."
-              : "The dispute is resolved. Finalize the ruling to reclaim your stake and rewards."}
+              ? "The ruling has been executed. Go to your Profile to withdraw your funds."
+              : "Finalize the ruling to unlock funds for withdrawal."}
           </p>
         </div>
 
@@ -161,10 +152,11 @@ export default function ExecuteRulingPage() {
 
           {isFinished ? (
             <button
-              onClick={() => router.push("/disputes")}
-              className="w-full py-4 px-6 bg-white border border-gray-200 text-[#1b1c23] rounded-2xl font-bold text-sm shadow-sm hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+              onClick={() => router.push("/profile")}
+              className="w-full py-4 px-6 bg-[#1b1c23] border border-gray-200 text-white rounded-2xl font-bold text-sm shadow-xl hover:bg-[#2c2d33] transition-all flex items-center justify-center gap-2"
             >
-              <span>Return to Home</span>
+              <Wallet className="w-4 h-4" />
+              <span>Go to Profile to Withdraw</span>
             </button>
           ) : (
             <button
@@ -187,9 +179,8 @@ export default function ExecuteRulingPage() {
                 </>
               ) : (
                 <>
-                  <Wallet className="w-4 h-4" />
-                  <span>WITHDRAW FUNDS</span>
-                  <ArrowRight className="w-4 h-4 opacity-60" />
+                  <Gavel className="w-4 h-4" />
+                  <span>EXECUTE RULING</span>
                 </>
               )}
             </button>
@@ -203,7 +194,6 @@ export default function ExecuteRulingPage() {
 }
 
 // --- Helper Component for the "Receipt" ---
-
 const RewardRow = ({
   label,
   value,

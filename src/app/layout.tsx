@@ -7,7 +7,6 @@ import { Geist } from "next/font/google";
 import localFont from "next/font/local";
 import { BottomNavigation } from "@/components/layout/BottomNavigation";
 import { ConsoleOverlay } from "@/components/debug/ConsoleOverlay";
-import { DebugToggle } from "@/components/debug/DebugToggle";
 
 export const metadata: Metadata = {
   title: "Slice",
@@ -48,7 +47,6 @@ export default async function RootLayout({
             <div className="flex-1 flex flex-col pb-[70px]">{children}</div>
             <BottomNavigation />
             <ConsoleOverlay />
-            <DebugToggle />
           </div>
         </ContextProvider>
       </body>

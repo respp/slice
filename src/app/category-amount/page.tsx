@@ -4,38 +4,31 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AmountSelector } from "@/components/category-amount/AmountSelector";
 import { SwipeButton } from "@/components/category-amount/SwipeButton";
-import { AlertCircle, ChevronDown, ArrowLeft, Target } from "lucide-react";
+import { AlertCircle, ChevronDown, Target } from "lucide-react";
+import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 
 export default function CategoryAmountPage() {
   const router = useRouter();
+  // Default to 50 USDC (middle option)
   const [selectedAmount, setSelectedAmount] = useState<number>(50);
   const [category, setCategory] = useState("Select a category");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const handleBack = () => router.back();
-
   const handleSwipeComplete = () => {
-    const ethValue = "0.00005";
-    router.push(`/assign-dispute?amount=${ethValue}`);
+    // Pass the selected integer amount (e.g., "50") to the assign page.
+    // The useAssignDispute hook will parse this string into USDC units (6 decimals).
+    router.push(`/assign-dispute?amount=${selectedAmount.toString()}`);
   };
 
   return (
     <div className="flex flex-col h-screen bg-[#F8F9FC]">
-      {/* 1. Simplified Header (Just the Back Button) */}
-      <div className="px-6 pt-6 pb-2">
-        <button
-          onClick={handleBack}
-          className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
-        >
-          <ArrowLeft className="w-5 h-5 text-[#1b1c23]" />
-        </button>
-      </div>
+      <DisputeOverviewHeader onBack={() => router.back()} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col justify-center px-5 pb-8 gap-4 overflow-y-auto">
         {/* 2. Main Stake Card */}
         <div className="w-full bg-white rounded-[32px] p-6 shadow-[0px_8px_30px_rgba(0,0,0,0.04)] border border-white flex flex-col items-center justify-center text-center relative overflow-visible">
-          {/* --- NEW: Category Selector (Inside the card) --- */}
+          {/* --- Category Selector (Inside the card) --- */}
           <div className="relative z-20 w-full mb-6">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -43,7 +36,6 @@ export default function CategoryAmountPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-[#8c8fff]">
-                  {/* You can swap this icon based on selection */}
                   <Target className="w-5 h-5" />
                 </div>
                 <span className="font-bold text-sm text-[#1b1c23]">
