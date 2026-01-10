@@ -10,7 +10,7 @@ import { SuccessAnimation } from "@/components/SuccessAnimation";
 import { DisputeCandidateCard } from "@/components/disputes/DisputeCandidateCard";
 import { VsBadge } from "@/components/disputes/VsBadge";
 import { useVote } from "@/hooks/useVote";
-import { useSwipeGesture } from "@/hooks/useSwipeGesture";
+import { usePageSwipe } from "@/hooks/usePageSwipe";
 import { useDisputeParties } from "@/hooks/useDisputeParties";
 
 export default function VotePage() {
@@ -33,7 +33,7 @@ export default function VotePage() {
 
   const parties = useDisputeParties(dispute);
 
-  const { handlers } = useSwipeGesture({
+  const bindSwipe = usePageSwipe({
     onSwipeRight: () => router.push(`/defendant-evidence/${disputeId}`),
   });
 
@@ -50,7 +50,7 @@ export default function VotePage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#F8F9FC]" {...handlers}>
+    <div className="flex flex-col h-screen bg-[#F8F9FC]" {...bindSwipe()}>
       {/* 1. Header */}
       <div className="flex-none z-10 bg-[#F8F9FC]/80 backdrop-blur-md">
         <DisputeOverviewHeader onBack={() => router.back()} />

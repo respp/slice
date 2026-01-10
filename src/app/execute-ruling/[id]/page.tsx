@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useGetDispute } from "@/hooks/useGetDispute";
 import { useExecuteRuling } from "@/hooks/useExecuteRuling";
 import { SuccessAnimation } from "@/components/SuccessAnimation";
-import { useSwipeGesture } from "@/hooks/useSwipeGesture";
+import { usePageSwipe } from "@/hooks/usePageSwipe";
 import { Loader2, Wallet, Trophy, Coins, Gavel } from "lucide-react";
 import { toast } from "sonner";
 import { PaginationDots } from "@/components/dispute-overview/PaginationDots";
@@ -21,7 +21,7 @@ export default function ExecuteRulingPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { handlers } = useSwipeGesture({
+  const bindSwipe = usePageSwipe({
     onSwipeRight: () => router.back(),
   });
 
@@ -58,7 +58,7 @@ export default function ExecuteRulingPage() {
     <div
       ref={containerRef}
       className="flex flex-col h-screen bg-[#F8F9FC] relative overflow-hidden font-manrope"
-      {...handlers}
+      {...bindSwipe()}
     >
       {/* 1. Header (Transparent & Clean) */}
       <DisputeOverviewHeader

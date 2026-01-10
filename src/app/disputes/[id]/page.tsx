@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 import { PaginationDots } from "@/components/dispute-overview/PaginationDots";
 import { useGetDispute } from "@/hooks/useGetDispute";
-import { useSwipeGesture } from "@/hooks/useSwipeGesture";
+import { usePageSwipe } from "@/hooks/usePageSwipe";
 import { shortenAddress } from "@/util/wallet";
 import {
   Loader2,
@@ -28,7 +28,7 @@ export default function DisputeOverviewPage() {
   const handleStartReview = () =>
     router.push(`/claimant-evidence/${disputeId}`);
 
-  const { handlers } = useSwipeGesture({
+  const bindSwipe = usePageSwipe({
     onSwipeLeft: handleStartReview,
   });
 
@@ -78,8 +78,8 @@ export default function DisputeOverviewPage() {
 
   return (
     <div
-      className="flex flex-col h-screen bg-[#F8F9FC] relative overflow-hidden"
-      {...handlers}
+      className="flex flex-col h-screen bg-[#F8F9FC] relative overflow-hidden touch-none"
+      {...bindSwipe()}
     >
       {/* Background Decorative blob */}
       <div className="absolute top-[-150px] left-[-100px] w-[300px] h-[300px] bg-[#8c8fff]/10 rounded-full blur-[80px] pointer-events-none" />
