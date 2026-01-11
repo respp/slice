@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import Image from "next/image";
 import {
   Search,
   Wallet,
@@ -205,8 +206,17 @@ asted a raw address, offer to save it */}
                     onClick={() => handleSelect(contact)}
                     className="flex-1 flex items-center gap-3 p-1.5 text-left"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs font-bold shrink-0">
-                      {contact.name.charAt(0)}
+                    <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden relative">
+                      {contact.avatar ? (
+                        <Image
+                          src={contact.avatar}
+                          alt={contact.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        contact.name.charAt(0)
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-bold text-gray-700 group-hover:text-[#1b1c23]">

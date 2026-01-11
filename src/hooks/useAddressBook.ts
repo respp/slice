@@ -21,8 +21,7 @@ export function useAddressBook() {
           (contact, index, self) =>
             index ===
             self.findIndex(
-              (c) =>
-                c.address.toLowerCase() === contact.address.toLowerCase(),
+              (c) => c.address.toLowerCase() === contact.address.toLowerCase(),
             ),
         );
         setContacts(combined);
@@ -32,10 +31,10 @@ export function useAddressBook() {
     }
   }, []);
 
-  const addContact = (name: string, address: string) => {
+  const addContact = (name: string, address: string, avatar?: string) => {
     if (!name || !address) return;
 
-    const newContact: Contact = { name, address };
+    const newContact: Contact = { name, address, avatar };
 
     setContacts((prev) => {
       // Avoid duplicates

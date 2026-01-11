@@ -1,36 +1,20 @@
 "use client";
-
-import React from "react";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, User, Users, Settings } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  ArrowLeft,
-  Terminal,
-  Bug,
-  Trophy,
-  Flame,
-  Target,
-  Wallet,
-} from "lucide-react";
-import ConnectButton from "@/components/ConnectButton";
-import { useJurorStats } from "@/hooks/useJurorStats";
-import { useWithdraw } from "@/hooks/useWithdraw";
+  ProfileOverview,
+  ContactsView,
+  SettingsView,
+} from "@/components/profile/views";
 
 export default function ProfilePage() {
   const router = useRouter();
 
-  // 1. Fetch Stats
-  const { stats, rank } = useJurorStats();
-
-  // 2. Fetch Withdraw Data
-  const { withdraw, isWithdrawing, claimableAmount, hasFunds } = useWithdraw();
-
-  const openConsole = () =>
-    window.dispatchEvent(new Event("open-debug-console"));
-
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8F9FC] pb-32">
-      {/* ... Header ... */}
-      <div className="w-full px-6 pt-10 pb-4 flex items-center justify-between sticky top-0 bg-[#F8F9FC]/80 backdrop-blur-md z-20">
+    <div className="flex flex-col h-screen bg-[#F8F9FC] overflow-hidden">
+      {/* --- Sticky Header --- */}
+      <div className="w-full px-6 pt-10 pb-2 flex items-center justify-between bg-[#F8F9FC]/90 backdrop-blur-md z-30 shrink-0">
         <button
           onClick={() => router.push("/disputes")}
           className="w-10 h-10 rounded-xl bg-white flex items-center justify-center hover:bg-gray-50 transition-all shadow-sm border border-gray-100 active:scale-95"
@@ -43,167 +27,64 @@ export default function ProfilePage() {
         <div className="w-10" />
       </div>
 
-      <div className="flex-1 px-6 flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {/* ... Hero Card ... */}
-        <div className="relative w-full rounded-4xl p-1 bg-linear-to-b from-gray-100 to-white shadow-xl shadow-gray-200/50">
-          <div className="bg-[#1b1c23] rounded-[30px] p-6 pb-8 text-white flex flex-col items-center gap-6 relative overflow-hidden">
-            {/* Avatar Section */}
-            <div className="relative z-10 mt-2">
-              <div className="w-28 h-28 rounded-full p-1 bg-linear-to-br from-[#8c8fff] to-blue-500 shadow-2xl relative">
-                <div className="w-full h-full rounded-full border-[3px] border-[#1b1c23] overflow-hidden bg-[#2c2d33]">
-                  <img
-                    src="/images/profiles-mockup/profile-1.jpg"
-                    alt="Juror Avatar"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#8c8fff] to-[#7a7de0] text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg border-[3px] border-[#1b1c23] z-20 whitespace-nowrap">
-                  {rank}
-                </div>
-              </div>
-            </div>
-
-            {/* Name & Address */}
-            <div className="flex flex-col items-center gap-3 z-10 w-full">
-              <h2 className="font-manrope font-black text-2xl tracking-tight">
-                {rank}
-              </h2>
-              <div className="scale-95 hover:scale-100 transition-transform duration-200">
-                <ConnectButton />
-              </div>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-3 divide-x divide-white/10 w-full bg-white/5 border border-white/5 rounded-2xl py-4 backdrop-blur-sm mt-2">
-              <div className="flex flex-col items-center gap-1">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center mb-1">
-                  <Target className="w-4 h-4 text-emerald-400" />
-                </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                  Accuracy
-                </span>
-                <span className="text-base font-extrabold text-white">
-                  {stats.accuracy}
-                </span>
-              </div>
-
-              <div className="flex flex-col items-center gap-1">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center mb-1">
-                  <Trophy className="w-4 h-4 text-blue-400" />
-                </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                  Cases
-                </span>
-                <span className="text-base font-extrabold text-white">
-                  {stats.matches}
-                </span>
-              </div>
-
-              <div className="flex flex-col items-center gap-1">
-                <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center mb-1">
-                  <Flame className="w-4 h-4 text-orange-400" />
-                </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                  Wins
-                </span>
-                <span className="text-base font-extrabold text-white">
-                  {stats.wins}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* --- WITHDRAW CARD (New) --- */}
-        {hasFunds && (
-          <div className="bg-[#1b1c23] rounded-3xl p-6 text-white shadow-lg shadow-indigo-200">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                  Claimable Earnings
-                </span>
-                <div className="text-3xl font-black mt-1">
-                  {claimableAmount} USDC
-                </div>
-              </div>
-              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
-                <Wallet className="w-6 h-6 text-white" />
-              </div>
-            </div>
-            <button
-              onClick={() => withdraw()}
-              disabled={isWithdrawing}
-              className="w-full py-3 bg-white text-[#1b1c23] rounded-xl font-bold hover:bg-gray-200 transition-colors disabled:opacity-50"
+      {/* --- Shadcn Tabs Architecture --- */}
+      <Tabs
+        defaultValue="overview"
+        className="flex flex-col flex-1 overflow-hidden"
+      >
+        {/* Navigation Pills */}
+        <div className="px-6 py-2 shrink-0 z-20">
+          <TabsList className="w-full bg-white h-auto p-1 rounded-2xl border border-gray-200 shadow-sm flex">
+            <TabsTrigger
+              value="overview"
+              className="flex-1 gap-2 rounded-xl py-2.5 data-[state=active]:bg-[#1b1c23] data-[state=active]:text-white data-[state=active]:shadow-md transition-all font-bold text-xs text-gray-500"
             >
-              {isWithdrawing ? "Processing..." : "Withdraw to Wallet"}
-            </button>
-          </div>
-        )}
+              <User className="w-4 h-4" />
+              Overview
+            </TabsTrigger>
 
-        {/* ... Rewards & Tools sections ... */}
-        <div className="flex flex-col gap-4">
-          <h3 className="font-manrope font-extrabold text-gray-800 uppercase tracking-wide ml-1">
-            Performance & Rewards
-          </h3>
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between group transition-all hover:shadow-md">
-            <div>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Lifetime Earnings
-              </span>
-              <div className="text-3xl font-black text-gray-800 tracking-tight">
-                {stats.earnings} USDC
-              </div>
-            </div>
-            <div className="w-14 h-14 rounded-2xl bg-[#eff0ff] flex items-center justify-center text-[#8c8fff] group-hover:scale-110 transition-transform duration-300">
-              <svg
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="8" cy="8" r="6" />
-                <path d="M18.09 10.37A6 6 0 1 1 10.34 18" />
-                <path d="M7 6h1v4" />
-                <path d="M17.12 12.23A6 6 0 0 1 5 8.77" strokeOpacity="0" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <h3 className="font-manrope font-extrabold text-gray-800 uppercase tracking-wide ml-1">
-            System &amp; Tools
-          </h3>
-
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => router.push("/debug")}
-              className="flex items-center justify-center gap-2 p-3 bg-white rounded-xl border border-gray-100 shadow-sm text-xs font-bold text-gray-600 hover:bg-gray-50 active:scale-95 transition-all"
+            <TabsTrigger
+              value="contacts"
+              className="flex-1 gap-2 rounded-xl py-2.5 data-[state=active]:bg-[#1b1c23] data-[state=active]:text-white data-[state=active]:shadow-md transition-all font-bold text-xs text-gray-500"
             >
-              <Bug className="w-4 h-4 text-[#8c8fff]" />
-              <span>Debugger</span>
-            </button>
+              <Users className="w-4 h-4" />
+              Contacts
+            </TabsTrigger>
 
-            <button
-              onClick={openConsole}
-              className="flex items-center justify-center gap-2 p-3 bg-white rounded-xl border border-gray-100 shadow-sm text-xs font-bold text-gray-600 hover:bg-gray-50 active:scale-95 transition-all"
+            <TabsTrigger
+              value="settings"
+              className="flex-1 gap-2 rounded-xl py-2.5 data-[state=active]:bg-[#1b1c23] data-[state=active]:text-white data-[state=active]:shadow-md transition-all font-bold text-xs text-gray-500"
             >
-              <Terminal className="w-4 h-4 text-gray-500" />
-              <span>Console</span>
-            </button>
-          </div>
+              <Settings className="w-4 h-4" />
+              Settings
+            </TabsTrigger>
+          </TabsList>
         </div>
 
-        <div className="text-center mt-4">
-          <span className="text-[12px] font-bold text-gray-400">
-            Slice v1.0.2{" "}
-          </span>
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto px-6 pt-2 scrollbar-hide">
+          <TabsContent
+            value="overview"
+            className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-300"
+          >
+            <ProfileOverview />
+          </TabsContent>
+
+          <TabsContent
+            value="contacts"
+            className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-300"
+          >
+            <ContactsView />
+          </TabsContent>
+
+          <TabsContent
+            value="settings"
+            className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-300"
+          >
+            <SettingsView />
+          </TabsContent>
         </div>
-      </div>
+      </Tabs>
     </div>
   );
 }
