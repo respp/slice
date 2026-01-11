@@ -1,5 +1,5 @@
 import React from "react";
-import { PersonIcon } from "../disputes/icons/BadgeIcons";
+import { User } from "lucide-react";
 import { shortenAddress } from "@/util/wallet";
 
 interface Claimant {
@@ -51,7 +51,7 @@ export const ClaimantInfoCard: React.FC<ClaimantInfoCardProps> = ({
           Evidence from {shortenAddress(claimant.name)}
         </h2>
         <span className="inline-flex items-center gap-1 bg-[#8c8fff] text-white px-2 py-1 rounded-[6px] font-manrope font-bold text-[10px] tracking-[-0.2px] w-fit">
-          <PersonIcon size={10} color="white" />
+          <User size={10} className="text-white" />
           {claimant.role}
         </span>
       </div>

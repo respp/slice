@@ -2,8 +2,10 @@ import { useReadContract } from "wagmi";
 import { SLICE_ABI, SLICE_ADDRESS } from "@/config/contracts";
 import { transformDisputeData, type DisputeUI } from "@/util/disputeAdapter";
 import { useState, useEffect } from "react";
+import { useStakingToken } from "./useStakingToken";
 
 export function useGetDispute(id: string) {
+  const { decimals } = useStakingToken();
   // 1. Fetch raw dispute data from the contract
   const {
     data: rawDispute,
@@ -34,17 +36,20 @@ export function useGetDispute(id: string) {
       }
       try {
         // We pass the raw result to the transformer we fixed in Step 1
-        const transformed = await transformDisputeData({
-          ...(rawDispute as any),
-          id,
-        });
+        const transformed = await transformDisputeData(
+          {
+            ...(rawDispute as any),
+            id,
+          },
+          decimals,
+        );
         setTransformedDispute(transformed);
       } catch (e) {
         console.error("Failed to transform dispute data", e);
       }
     }
     load();
-  }, [rawDispute, id]);
+  }, [rawDispute, id, decimals]);
 
   return {
     dispute: transformedDispute,

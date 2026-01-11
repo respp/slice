@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { Loader2, X } from "lucide-react";
-import { useSendFunds } from "@/hooks/useSendFunds"; // Import the new hook
+import { useSendFunds } from "@/hooks/useSendFunds";
+import { useStakingToken } from "@/hooks/useStakingToken";
 
 interface SendModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface SendModalProps {
 }
 
 export const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
+  const { symbol } = useStakingToken();
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
 
@@ -29,11 +31,11 @@ export const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-[24px] w-full max-w-sm p-6 shadow-xl relative animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-xl relative animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-extrabold text-[#1b1c23] font-manrope">
-            Send USDC
+            Send {symbol}
           </h2>
           <button
             onClick={onClose}
@@ -61,7 +63,7 @@ export const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
 
           <div className="space-y-2">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Amount (USDC)
+              Amount ({symbol})
             </label>
             <input
               type="number"

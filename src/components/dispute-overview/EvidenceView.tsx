@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 import { PaginationDots } from "@/components/dispute-overview/PaginationDots";
 import { useEvidence, EvidenceRole } from "@/hooks/useEvidence";
-import { useSwipeGesture } from "@/hooks/useSwipeGesture";
+import { usePageSwipe } from "@/hooks/usePageSwipe";
 import {
   Calendar,
   User,
@@ -54,7 +54,7 @@ export const EvidenceView: React.FC<EvidenceViewProps> = ({
     useEvidence(disputeId, role);
 
   // 2. Swipe Handlers
-  const { handlers } = useSwipeGesture({
+  const bindSwipe = usePageSwipe({
     onSwipeLeft: () => router.push(nextPath),
     onSwipeRight: () => router.push(prevPath),
   });
@@ -71,8 +71,8 @@ export const EvidenceView: React.FC<EvidenceViewProps> = ({
   return (
     <div
       ref={containerRef}
-      className="flex flex-col h-screen bg-[#F8F9FC] font-manrope relative overflow-hidden"
-      {...handlers}
+      className="flex flex-col h-screen bg-[#F8F9FC] font-manrope relative overflow-hidden touch-none"
+      {...bindSwipe()}
     >
       {/* --- 1. FIXED HEADER --- */}
       <div className="flex-none px-6 pt-4 pb-2 z-20 bg-[#F8F9FC]/80 backdrop-blur-sm">

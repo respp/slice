@@ -1,7 +1,5 @@
 import React from "react";
-import { CrowdfundingIcon, PersonIcon } from "../disputes/icons/BadgeIcons";
-import { CalendarIcon } from "./CalendarIcon";
-import { CheckCircle2 } from "lucide-react";
+import { Tag, Users, Calendar, CheckCircle2 } from "lucide-react";
 
 interface Actor {
   name: string;
@@ -53,7 +51,7 @@ export const DisputeInfoCard: React.FC<DisputeInfoCardProps> = ({
 
           <div className="flex flex-wrap gap-2">
             <span className="inline-flex items-center gap-1 bg-[#8c8fff33] text-[#1b1c23] px-2 py-1 rounded-[11.5px] font-manrope font-extrabold text-[10px] tracking-[-0.2px] w-fit h-[23px]">
-              <CrowdfundingIcon size={9} color="#1b1c23" />
+              <Tag size={9} className="text-[#1b1c23]" />
               {dispute.category}
             </span>
 
@@ -68,7 +66,7 @@ export const DisputeInfoCard: React.FC<DisputeInfoCardProps> = ({
 
             {dispute.totalVotes !== undefined && (
               <span className="inline-flex items-center gap-1 bg-[#8c8fff33] text-[#1b1c23] px-2 py-1 rounded-[11.5px] font-manrope font-extrabold text-[10px] tracking-[-0.2px] w-fit h-[23px]">
-                <PersonIcon size={10} color="#8c8fff" />
+                <Users size={10} className="text-[#8c8fff]" />
                 {dispute.votesCount || 0}/{dispute.totalVotes} Votes
               </span>
             )}
@@ -149,11 +147,7 @@ export const DisputeInfoCard: React.FC<DisputeInfoCardProps> = ({
             Creation Date
           </div>
           <div className="inline-flex items-center gap-1.5 bg-[#8c8fff33] text-[#1b1c23] px-2.5 py-1.5 rounded-[11.5px] font-manrope font-extrabold text-[10px] tracking-[-0.2px] w-fit h-[23px]">
-            <CalendarIcon
-              size={10}
-              color="#8c8fff"
-              className="shrink-0 block w-2.5 h-[11.6px]"
-            />
+            <Calendar size={10} className="text-[#8c8fff] shrink-0" />
             {dispute.creationDate}
           </div>
         </div>
@@ -162,11 +156,7 @@ export const DisputeInfoCard: React.FC<DisputeInfoCardProps> = ({
             Max Deadline
           </div>
           <div className="inline-flex items-center gap-1.5 bg-[#8c8fff33] text-[#1b1c23] px-2.5 py-1.5 rounded-[11.5px] font-manrope font-extrabold text-[10px] tracking-[-0.2px] w-fit h-[23px]">
-            <CalendarIcon
-              size={10}
-              color="#8c8fff"
-              className="shrink-0 block w-2.5 h-[11.6px]"
-            />
+            <Calendar size={10} className="text-[#8c8fff] shrink-0" />
             {dispute.deadline}
           </div>
         </div>

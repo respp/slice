@@ -3,19 +3,16 @@
 import React, { useState, useMemo } from "react";
 import { useChainId, useAccount } from "wagmi";
 import { useFundWallet } from "@privy-io/react-auth";
-import { RefreshCw } from "lucide-react";
-import { DepositIcon, SendIcon, ReceiveIcon } from "./icons/ActionIcons";
+import { RefreshCw, ArrowDownCircle, Send, QrCode } from "lucide-react";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { SendModal } from "./SendModal";
 import { ReceiveModal } from "./ReceiveModal";
-import { getContractsForChain } from "@/config/contracts";
 
 export const BalanceCard: React.FC = () => {
   const chainId = useChainId();
   const { address } = useAccount();
 
-  const { usdcToken } = getContractsForChain(chainId);
-  const { formatted, loading: isLoading, refetch } = useTokenBalance(usdcToken);
+  const { formatted, loading: isLoading, refetch } = useTokenBalance();
   const { fundWallet } = useFundWallet();
 
   const [isSendOpen, setIsSendOpen] = useState(false);
@@ -41,6 +38,12 @@ export const BalanceCard: React.FC = () => {
       },
     });
   };
+
+  const actionBtnClass =
+    "flex flex-col items-center gap-1 bg-none border-none text-white cursor-pointer p-0 hover:opacity-80 transition-opacity group";
+  const iconClass =
+    "shrink-0 block w-[40px] h-[40px] group-hover:opacity-80 transition-opacity stroke-1";
+
   return (
     <>
       <div className="bg-[#1b1c23] rounded-[21px] pt-[26px] px-[28px] pb-6 mt-[50px] mx-5 w-auto min-h-[110px] flex flex-row justify-between items-end text-white box-border">
@@ -75,31 +78,28 @@ export const BalanceCard: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="flex gap-[26px] items-center shrink-0 self-end">
-          <button
-            className="flex flex-col items-center gap-1 bg-none border-none text-white cursor-pointer p-0 hover:opacity-80 transition-opacity group"
-            onClick={handleDeposit}
-          >
-            <DepositIcon className="shrink-0 block w-[40.5px] h-[40.5px] group-hover:opacity-80 transition-opacity" />
+          <button className={actionBtnClass} onClick={handleDeposit}>
+            <ArrowDownCircle className={iconClass} />
             <span className="font-manrope font-semibold text-xs tracking-[-0.12px] leading-none">
               Deposit
             </span>
           </button>
 
           <button
-            className="flex flex-col items-center gap-1 bg-none border-none text-white cursor-pointer p-0 hover:opacity-80 transition-opacity group"
+            className={actionBtnClass}
             onClick={() => setIsReceiveOpen(true)}
           >
-            <ReceiveIcon className="shrink-0 block w-[40.5px] h-[40.5px] group-hover:opacity-80 transition-opacity" />
+            <QrCode className={iconClass} />
             <span className="font-manrope font-semibold text-xs tracking-[-0.12px] leading-none">
               Receive
             </span>
           </button>
 
           <button
-            className="flex flex-col items-center gap-1 bg-none border-none text-white cursor-pointer p-0 hover:opacity-80 transition-opacity group"
+            className={actionBtnClass}
             onClick={() => setIsSendOpen(true)}
           >
-            <SendIcon className="shrink-0 block w-[40.5px] h-[40.5px] group-hover:opacity-80 transition-opacity" />
+            <Send className={iconClass} />
             <span className="font-manrope font-semibold text-xs tracking-[-0.12px] leading-none">
               Send
             </span>

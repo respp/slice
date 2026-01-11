@@ -2,9 +2,11 @@ import { useReadContract, useReadContracts, useAccount } from "wagmi";
 import { SLICE_ABI, SLICE_ADDRESS } from "@/config/contracts";
 import { transformDisputeData, type DisputeUI } from "@/util/disputeAdapter";
 import { useMemo, useState, useEffect } from "react";
+import { useStakingToken } from "./useStakingToken";
 
 export function useMyDisputes() {
   const { address } = useAccount();
+  const { decimals } = useStakingToken();
 
   // 1. Fetch disputes where I am a Juror
   const { data: jurorIds } = useReadContract({
@@ -75,7 +77,7 @@ export function useMyDisputes() {
       const processed = await Promise.all(
         results.map(async (result) => {
           if (result.status !== "success") return null;
-          return await transformDisputeData(result.result);
+          return await transformDisputeData(result.result, decimals);
         }),
       );
 
@@ -83,7 +85,7 @@ export function useMyDisputes() {
       setIsProcessing(false);
     }
     process();
-  }, [results, isMulticallLoading]);
+  }, [results, isMulticallLoading, decimals]);
 
   return { disputes, isLoading: isMulticallLoading || isProcessing, refetch };
 }

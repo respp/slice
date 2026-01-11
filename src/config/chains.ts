@@ -1,4 +1,4 @@
-import { baseSepolia, base, scrollSepolia, scroll } from "wagmi/chains";
+import { baseSepolia, base } from "wagmi/chains";
 
 import type { Chain } from "viem";
 
@@ -31,7 +31,7 @@ export const SUPPORTED_CHAINS: ChainConfig[] = [
 
 const isProd = process.env.NEXT_PUBLIC_APP_ENV === "production";
 
-// Example: Select Base Mainnet (8453) for Prod, Base Sepolia (84532) for Dev
+// Select Base Mainnet (8453) for Prod, Base Sepolia (84532) for Dev
 const defaultChainId = isProd ? base.id : baseSepolia.id;
 
 export const DEFAULT_CHAIN_CONFIG =

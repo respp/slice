@@ -2,8 +2,10 @@ import { useReadContract, useReadContracts } from "wagmi";
 import { SLICE_ABI, SLICE_ADDRESS } from "@/config/contracts";
 import { transformDisputeData, type DisputeUI } from "@/util/disputeAdapter";
 import { useMemo, useState, useEffect } from "react";
+import { useStakingToken } from "./useStakingToken";
 
 export function useAllDisputes() {
+  const { decimals } = useStakingToken();
   // 1. Get the total number of disputes
   const { data: countData } = useReadContract({
     address: SLICE_ADDRESS,
@@ -55,7 +57,7 @@ export function useAllDisputes() {
       const processed = await Promise.all(
         results.map(async (result) => {
           if (result.status !== "success") return null;
-          return await transformDisputeData(result.result);
+          return await transformDisputeData(result.result, decimals);
         }),
       );
 
@@ -63,7 +65,7 @@ export function useAllDisputes() {
       setIsProcessing(false);
     }
     process();
-  }, [results, isMulticallLoading, countData]);
+  }, [results, isMulticallLoading, countData, decimals]);
 
   return { disputes, isLoading: isMulticallLoading || isProcessing, refetch };
 }

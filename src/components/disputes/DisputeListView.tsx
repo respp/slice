@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { DisputeCard } from "./DisputeCard";
-import { BarChartIcon } from "./icons/Icon";
-import { Gavel, Loader2 } from "lucide-react";
+import { BarChart3, Gavel, Loader2 } from "lucide-react";
 import type { Dispute } from "@/hooks/useDisputeList"; // Or new DisputeUI interface
 
 interface Props {
@@ -50,8 +49,8 @@ export const DisputeListView: React.FC<Props> = ({
       {/* Header & Filter Row */}
       <div className="flex justify-between items-center mb-5 relative z-20">
         <div className="flex items-center gap-3">
-          <div className="w-5 h-5 rounded-md overflow-hidden">
-            <BarChartIcon />
+          <div className="w-5 h-5 rounded-md overflow-hidden bg-[#8c8fff] flex items-center justify-center">
+            <BarChart3 size={12} className="text-white" />
           </div>
           <h2 className="font-extrabold text-[15px]">
             {activeTab === "active" ? "Current Portfolio" : "Resolved Cases"}

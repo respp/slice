@@ -1,6 +1,4 @@
 import { useRouter } from "next/navigation";
-import { CrowdfundingIcon, PersonIcon } from "./icons/BadgeIcons";
-import { StarIcon } from "./icons/BadgeIcons";
 import {
   Wallet,
   CheckCircle2,
@@ -9,6 +7,9 @@ import {
   Gavel,
   Lock,
   Archive,
+  Tag,
+  Users,
+  Coins,
 } from "lucide-react";
 import type { Dispute } from "@/hooks/useDisputeList";
 
@@ -85,7 +86,7 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
 
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F5F6F9] border border-gray-100">
-              <CrowdfundingIcon size={10} color="#8c8fff" />
+              <Tag size={10} className="text-[#8c8fff]" />
               <span className="font-manrope font-bold text-[10px] text-[#1b1c23] uppercase tracking-wide">
                 {dispute.category}
               </span>
@@ -93,7 +94,7 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
             {/* Show Vote Count only if active */}
             {!isFinished && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F5F6F9] border border-gray-100">
-                <PersonIcon size={10} color="#8c8fff" />
+                <Users size={10} className="text-[#8c8fff]" />
                 <span className="font-manrope font-bold text-[10px] text-[#1b1c23] tracking-wide">
                   {dispute.votesCount || 0}/{dispute.jurorsRequired} jurors
                 </span>
@@ -165,7 +166,7 @@ export const DisputeCard = ({ dispute }: { dispute: DisputeUI }) => {
       {/* 3. Footer Section */}
       <div className="flex items-center justify-between pt-1">
         <div className="flex items-center gap-1.5">
-          <StarIcon size={14} color="#8c8fff" />
+          <Coins size={14} className="text-[#8c8fff]" />
           <span className="font-manrope font-bold text-xs text-[#8c8fff]">
             {dispute.stake} USDC
           </span>

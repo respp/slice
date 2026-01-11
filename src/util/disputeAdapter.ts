@@ -12,20 +12,20 @@ export interface DisputeUI {
   stake: string;
   jurorsRequired: number;
   revealDeadline: number;
-  evidenceDeadline?: number; // NEW
+  evidenceDeadline?: number;
   description: string;
   evidence: string[];
   claimer: string;
   defender: string;
   winner?: string;
 
-  // NEW: Real Data Fields
+  // Real Data Fields
   claimerName?: string;
   defenderName?: string;
   audioEvidence?: string | null;
   carouselEvidence?: string[];
 
-  // NEW: Defender Specific Fields
+  // Defender Specific Fields
   defenderDescription?: string;
   defenderAudioEvidence?: string | null;
   defenderCarouselEvidence?: string[];
@@ -33,6 +33,7 @@ export interface DisputeUI {
 
 export async function transformDisputeData(
   contractData: any,
+  decimals: number = 6,
 ): Promise<DisputeUI> {
   const id = contractData.id.toString();
   const status = Number(contractData.status);
@@ -108,11 +109,11 @@ export async function transformDisputeData(
     deadlineLabel,
     isUrgent,
     stake: contractData.requiredStake
-      ? formatUnits(contractData.requiredStake, 6)
+      ? formatUnits(contractData.requiredStake, decimals)
       : "0",
     jurorsRequired: Number(contractData.jurorsRequired),
     revealDeadline: Number(contractData.revealDeadline),
-    evidenceDeadline: Number(contractData.evidenceDeadline), // NEW
+    evidenceDeadline: Number(contractData.evidenceDeadline),
     description,
     evidence,
     claimer: contractData.claimer,

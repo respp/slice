@@ -8,6 +8,7 @@ import {
 import { erc20Abi, parseUnits } from "viem"; // Added parseUnits
 import { SLICE_ABI, getContractsForChain } from "@/config/contracts";
 import { toast } from "sonner";
+import { useStakingToken } from "./useStakingToken";
 
 async function processInBatches<T, R>(
   items: T[],
@@ -27,6 +28,8 @@ async function processInBatches<T, R>(
 export function useAssignDispute() {
   const [isFinding, setIsFinding] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+
+  const { address: stakingToken, decimals, symbol } = useStakingToken();
   const { address } = useAccount();
   const chainId = useChainId();
 
@@ -34,7 +37,7 @@ export function useAssignDispute() {
   const publicClient = usePublicClient();
 
   // We need contracts
-  const { sliceContract, usdcToken } = getContractsForChain(chainId);
+  const { sliceContract } = getContractsForChain(chainId);
 
   // 1. MATCHMAKER Logic
   const findActiveDispute = useCallback(async (): Promise<number | null> => {
@@ -44,7 +47,7 @@ export function useAssignDispute() {
     try {
       // Step 1: Get Total Count
       const count = await publicClient.readContract({
-        address: sliceContract as `0x${string}`,
+        address: sliceContract,
         abi: SLICE_ABI,
         functionName: "disputeCount",
       });
@@ -62,7 +65,7 @@ export function useAssignDispute() {
       const results = await processInBatches(correctIds, 5, async (id) => {
         try {
           const d = await publicClient.readContract({
-            address: sliceContract as `0x${string}`,
+            address: sliceContract,
             abi: SLICE_ABI,
             functionName: "disputes",
             args: [BigInt(id)],
@@ -93,7 +96,7 @@ export function useAssignDispute() {
   }, [publicClient, sliceContract]);
 
   // 2. ACTION: Join Dispute
-  const joinDispute = async (disputeId: number, amountUSDC: string = "50") => {
+  const joinDispute = async (disputeId: number, amount: string = "50") => {
     if (!address || !publicClient) {
       toast.error("Wallet not connected");
       return false;
@@ -102,26 +105,25 @@ export function useAssignDispute() {
     try {
       setIsJoining(true);
 
-      // Convert readable USDC amount to BigInt (6 decimals)
-      const amountToStake = parseUnits(amountUSDC, 6);
+      const amountToStake = parseUnits(amount, decimals);
 
-      console.log(`[Join] Staking: ${amountUSDC} USDC (${amountToStake})`);
+      console.log(`[Join] Staking: ${amount} ${symbol} (${amountToStake})`);
 
       // Check Allowance
       const allowance = await publicClient.readContract({
-        address: usdcToken as `0x${string}`,
+        address: stakingToken,
         abi: erc20Abi,
         functionName: "allowance",
-        args: [address, sliceContract as `0x${string}`],
+        args: [address, sliceContract],
       });
 
       if (allowance < amountToStake) {
         toast.info("Approving Stake...");
         const approveHash = await writeContractAsync({
-          address: usdcToken as `0x${string}`,
+          address: stakingToken,
           abi: erc20Abi,
           functionName: "approve",
-          args: [sliceContract as `0x${string}`, amountToStake],
+          args: [sliceContract, amountToStake],
         });
         await publicClient.waitForTransactionReceipt({ hash: approveHash });
         toast.success("Approval confirmed.");
@@ -130,7 +132,7 @@ export function useAssignDispute() {
       toast.info("Joining Jury...");
 
       const joinHash = await writeContractAsync({
-        address: sliceContract as `0x${string}`,
+        address: sliceContract,
         abi: SLICE_ABI,
         functionName: "joinDispute",
         args: [BigInt(disputeId), amountToStake], // Pass explicit amount

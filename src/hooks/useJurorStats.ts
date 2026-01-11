@@ -1,9 +1,11 @@
 import { useReadContract, useAccount } from "wagmi";
 import { SLICE_ABI, SLICE_ADDRESS } from "@/config/contracts";
 import { formatUnits } from "viem";
+import { useStakingToken } from "./useStakingToken";
 
 export function useJurorStats() {
   const { address } = useAccount();
+  const { decimals } = useStakingToken();
 
   const { data, isLoading, refetch } = useReadContract({
     address: SLICE_ADDRESS,
@@ -52,7 +54,7 @@ export function useJurorStats() {
     stats: {
       matches,
       wins,
-      earnings: formatUnits(rawEarnings, 6), // USDC 6 decimals
+      earnings: formatUnits(rawEarnings, decimals),
       accuracy,
     },
     rank,

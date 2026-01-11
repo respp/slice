@@ -1,9 +1,7 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
 // TODO:
-// - Require parties to pay requiredStake + arbitrationFee.
-// - Switch from "First-Come-First-Serve" to a "Lottery System" using Chainlink VRF.
+// - Add Min and Max stake as deployment parameters
 interface IERC20 {
     function transfer(
         address recipient,
@@ -65,7 +63,7 @@ contract Slice {
     struct JurorStats {
         uint256 totalDisputes; // Matches played
         uint256 coherentVotes; // Matches won
-        uint256 totalEarnings; // Total score (in USDC units)
+        uint256 totalEarnings; // Total score
     }
 
     // --- State Variables ---
@@ -79,7 +77,10 @@ contract Slice {
     mapping(uint256 => mapping(address => bytes32)) public commitments;
     mapping(uint256 => mapping(address => uint256)) public revealedVotes;
     mapping(uint256 => mapping(address => bool)) public hasRevealed;
+    mapping(uint256 => address[]) public candidates;
+    mapping(uint256 => address[]) public disputeCandidates;
     mapping(address => uint256) public balances;
+    mapping(uint256 => uint256) public totalStakePerDispute;
 
     // --- Constants ---
     // Assuming 6 decimals like USDC.
@@ -228,9 +229,12 @@ contract Slice {
     function joinDispute(uint256 _id, uint256 _amount) external {
         Dispute storage d = disputeStore[_id];
 
-        // 1. Validations
-        require(d.status == DisputeStatus.Commit, "Not in Commit phase");
-        require(disputeJurors[_id].length < d.jurorsRequired, "Jury full");
+        // 1. Validations: Ensure we are in the registration phase
+        require(d.status == DisputeStatus.Created, "Registration closed");
+        require(
+            block.timestamp <= d.payDeadline,
+            "Registration deadline passed"
+        );
         require(
             msg.sender != d.claimer && msg.sender != d.defender,
             "Parties cannot be jurors"
@@ -240,13 +244,16 @@ contract Slice {
         require(_amount >= MIN_STAKE, "Stake too low");
         require(_amount <= MAX_STAKE, "Stake too high");
 
-        // 3. Check for duplicates
-        address[] memory currentJurors = disputeJurors[_id];
-        for (uint i = 0; i < currentJurors.length; i++) {
-            require(currentJurors[i] != msg.sender, "Already joined");
+        totalStakePerDispute[_id] += _amount;
+
+        // 3. Check for duplicates in the candidate pool
+        // Renamed local variable to _candidates to avoid shadowing
+        address[] memory _candidates = candidates[_id];
+        for (uint i = 0; i < _candidates.length; i++) {
+            require(_candidates[i] != msg.sender, "Already registered");
         }
 
-        // 4. Transfer Specific Amount
+        // 4. Transfer Amount
         bool success = stakingToken.transferFrom(
             msg.sender,
             address(this),
@@ -255,11 +262,64 @@ contract Slice {
         require(success, "Transfer failed");
 
         // 5. Update State
-        disputeJurors[_id].push(msg.sender);
+        candidates[_id].push(msg.sender);
         jurorStakes[_id][msg.sender] = _amount;
         jurorDisputes[msg.sender].push(_id);
 
         emit JurorJoined(_id, msg.sender);
+    }
+
+    function selectJurors(uint256 _id) external {
+        Dispute storage d = disputeStore[_id];
+        uint256 totalWeight = totalStakePerDispute[_id];
+        require(totalWeight > 0, "No weight in pool");
+
+        // Use a memory array to track who we have picked
+        address[] memory pickedInThisRound = new address[](d.jurorsRequired);
+        uint256 pickedCount = 0;
+
+        for (uint i = 0; i < d.jurorsRequired; i++) {
+            address selected;
+            uint256 attempts = 0;
+
+            while (selected == address(0) && attempts < 10) {
+                uint256 target = uint256(
+                    keccak256(abi.encodePacked(block.prevrandao, i, attempts))
+                ) % totalWeight;
+
+                uint256 cumulative = 0;
+
+                for (uint j = 0; j < candidates[_id].length; j++) {
+                    address candidate = candidates[_id][j];
+                    cumulative += jurorStakes[_id][candidate];
+
+                    if (cumulative > target) {
+                        // CHECK: Is this juror already picked?
+                        bool alreadyPicked = false;
+                        for (uint k = 0; k < pickedCount; k++) {
+                            if (pickedInThisRound[k] == candidate) {
+                                alreadyPicked = true;
+                                break;
+                            }
+                        }
+
+                        if (!alreadyPicked) {
+                            selected = candidate;
+                            pickedInThisRound[pickedCount] = candidate;
+                            pickedCount++;
+                        }
+                        break;
+                    }
+                }
+                attempts++;
+            }
+
+            if (selected != address(0)) {
+                disputeJurors[_id].push(selected);
+            }
+        }
+
+        d.status = DisputeStatus.Commit;
     }
 
     function commitVote(uint256 _id, bytes32 _commitment) external {
@@ -358,8 +418,9 @@ contract Slice {
             address j = jurors[i];
             if (hasRevealed[_id][j]) {
                 uint256 v = revealedVotes[_id][j];
-                if (v == 0) votesFor0++;
-                else if (v == 1) votesFor1++;
+                uint256 weight = jurorStakes[_id][j];
+                if (v == 0) votesFor0 += weight;
+                else if (v == 1) votesFor1 += weight;
             }
         }
         return votesFor1 > votesFor0 ? 1 : 0;

@@ -6,14 +6,14 @@ export const getContractsForChain = (chainId: number) => {
   if (!config) {
     console.warn(`Chain ID ${chainId} not found in config, using default.`);
     return {
-      sliceContract: DEFAULT_CHAIN.contracts.slice,
-      usdcToken: DEFAULT_CHAIN.contracts.usdc,
+      sliceContract: DEFAULT_CHAIN.contracts.slice as `0x${string}`,
+      usdcToken: DEFAULT_CHAIN.contracts.usdc as `0x${string}`,
     };
   }
 
   return {
-    sliceContract: config.contracts.slice,
-    usdcToken: config.contracts.usdc,
+    sliceContract: config.contracts.slice as `0x${string}`,
+    usdcToken: config.contracts.usdc as `0x${string}`,
   };
 };
 

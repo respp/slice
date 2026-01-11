@@ -8,12 +8,15 @@ import {
 import { parseUnits, erc20Abi } from "viem";
 import { SLICE_ABI, getContractsForChain } from "@/config/contracts";
 import { toast } from "sonner";
+import { useStakingToken } from "./useStakingToken";
 
 export function usePayDispute() {
+  const { address } = useAccount();
+  const { address: stakingToken, decimals } = useStakingToken();
+  const chainId = useChainId();
+
   const { writeContractAsync } = useWriteContract();
   const publicClient = usePublicClient();
-  const { address } = useAccount();
-  const chainId = useChainId();
 
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<"idle" | "approving" | "paying">("idle");
@@ -27,10 +30,9 @@ export function usePayDispute() {
     try {
       setLoading(true);
 
-      const { usdcToken, sliceContract } = getContractsForChain(chainId);
+      const { sliceContract } = getContractsForChain(chainId);
 
-      // Convert amount to BigInt (assuming 6 decimals for USDC)
-      const amountBI = parseUnits(amountStr, 6);
+      const amountBI = parseUnits(amountStr, decimals);
 
       // --- STEP 1: APPROVE ---
       setStep("approving");
@@ -38,18 +40,18 @@ export function usePayDispute() {
 
       // We check allowance first to avoid redundant approval
       const allowance = await publicClient.readContract({
-        address: usdcToken as `0x${string}`,
+        address: stakingToken,
         abi: erc20Abi,
         functionName: "allowance",
-        args: [address, sliceContract as `0x${string}`],
+        args: [address, sliceContract],
       });
 
       if (allowance < amountBI) {
         const approveHash = await writeContractAsync({
-          address: usdcToken as `0x${string}`,
+          address: stakingToken,
           abi: erc20Abi,
           functionName: "approve",
-          args: [sliceContract as `0x${string}`, amountBI],
+          args: [sliceContract, amountBI],
         });
 
         // Wait for approval to be mined
@@ -64,7 +66,7 @@ export function usePayDispute() {
       toast.info("Paying dispute...");
 
       const payHash = await writeContractAsync({
-        address: sliceContract as `0x${string}`,
+        address: sliceContract,
         abi: SLICE_ABI,
         functionName: "payDispute",
         args: [BigInt(disputeId)],

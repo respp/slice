@@ -1,5 +1,5 @@
 import React from "react";
-import { CalendarIcon } from "./CalendarIcon";
+import { Calendar } from "lucide-react";
 
 interface DeadlineCardProps {
   deadline: string;
@@ -12,7 +12,7 @@ export const DeadlineCard: React.FC<DeadlineCardProps> = ({ deadline }) => {
         Resolution Deadline:
       </span>
       <div className="flex items-center gap-1.5 shrink-0">
-        <CalendarIcon size={10} color="#1b1c23" />
+        <Calendar size={10} className="text-[#1b1c23]" />
         <span className="font-manrope font-bold text-[13px] text-[#1b1c23] tracking-[-0.26px] leading-tight whitespace-nowrap">
           {deadline}
         </span>
