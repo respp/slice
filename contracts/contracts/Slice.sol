@@ -1,70 +1,10 @@
 pragma solidity ^0.8.19;
 
-// TODO:
-// - Add Min and Max stake as deployment parameters
-interface IERC20 {
-    function transfer(
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
+import {ISlice} from "./Interfaces/ISlice.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-    function balanceOf(address account) external view returns (uint256);
-}
-
-contract Slice {
-    // --- Enums & Structs ---
-    enum DisputeStatus {
-        Created,
-        Commit,
-        Reveal,
-        Finished
-    }
-
-    struct DisputeConfig {
-        address claimer;
-        address defender;
-        string category;
-        string ipfsHash;
-        uint256 jurorsRequired;
-        uint256 paySeconds;
-        uint256 evidenceSeconds;
-        uint256 commitSeconds;
-        uint256 revealSeconds;
-    }
-
-    struct Dispute {
-        uint256 id;
-        address claimer;
-        address defender;
-        string category;
-        uint256 requiredStake;
-        uint256 jurorsRequired;
-        string ipfsHash;
-        // state
-        uint256 commitsCount;
-        uint256 revealsCount;
-        DisputeStatus status;
-        bool claimerPaid;
-        bool defenderPaid;
-        address winner;
-        // deadlines
-        uint256 payDeadline;
-        uint256 evidenceDeadline;
-        uint256 commitDeadline;
-        uint256 revealDeadline;
-    }
-
-    struct JurorStats {
-        uint256 totalDisputes; // Matches played
-        uint256 coherentVotes; // Matches won
-        uint256 totalEarnings; // Total score
-    }
+contract Slice is ISlice {
+    
 
     // --- State Variables ---
     uint256 public disputeCount;
