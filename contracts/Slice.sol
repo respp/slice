@@ -2,6 +2,7 @@ pragma solidity ^0.8.19;
 
 // TODO:
 // - Add Min and Max stake as deployment parameters
+// - Add Open Zeppelin standard for upgradable logic
 interface IERC20 {
     function transfer(
         address recipient,
