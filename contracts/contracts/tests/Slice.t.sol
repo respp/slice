@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Slice} from "./Slice.sol"; // Adjust path if needed
-import {Test} from "forge-std/Test.sol";
+import {Slice} from "../Slice.sol"; // Adjust path if needed
+import {Test} from "forge-std/src/Test.sol";
 
 // 1. Simple Mock Token to simulate USDC
 contract MockUSDC {
