@@ -187,6 +187,7 @@ contract Slice{
         require(d.status == DisputeStatus.Created, "Payment closed");
         require(block.timestamp <= d.payDeadline, "Deadline passed");
 
+        // Por que tienen que pagar el defender y el claimer
         if (msg.sender == d.claimer) {
             require(!d.claimerPaid, "Already paid");
             d.claimerPaid = true;
