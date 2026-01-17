@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { useChainId, useAccount } from "wagmi";
 import { useFundWallet } from "@privy-io/react-auth";
+import { useRouter } from "next/navigation";
 import { RefreshCw, ArrowDownCircle, Send, QrCode } from "lucide-react";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { SendModal } from "./SendModal";
@@ -10,6 +11,7 @@ import { ReceiveModal } from "./ReceiveModal";
 import { FaucetButton } from "./FaucetButton";
 
 export const BalanceCard: React.FC = () => {
+  const router = useRouter();
   const chainId = useChainId();
   const { address } = useAccount();
 
@@ -85,7 +87,10 @@ export const BalanceCard: React.FC = () => {
 
           {/* Action Row: Details + Faucet */}
           <div className="flex items-center gap-2 mt-0">
-            <button className="bg-[#8c8fff] text-[#1b1c23] border-none rounded-[12.5px] px-[18px] py-[9px] h-7 flex items-center justify-center font-manrope font-extrabold text-xs tracking-[-0.36px] cursor-pointer hover:opacity-90 whitespace-nowrap shrink-0 transition-opacity">
+            <button
+              onClick={() => router.push("/profile")}
+              className="bg-[#8c8fff] text-[#1b1c23] border-none rounded-[12.5px] px-4.5 py-2 h-7 flex items-center justify-center font-manrope font-extrabold text-xs tracking-[-0.36px] cursor-pointer hover:opacity-90 whitespace-nowrap shrink-0 transition-opacity"
+            >
               Details
             </button>
             <FaucetButton />
@@ -93,7 +98,7 @@ export const BalanceCard: React.FC = () => {
         </div>
 
         {/* Action Buttons (Right Side) */}
-        <div className="flex gap-[26px] items-center shrink-0 self-end">
+        <div className="flex gap-4 items-center shrink-0 self-end">
           <button className={actionBtnClass} onClick={handleDeposit}>
             <ArrowDownCircle className={iconClass} />
             <span className="font-manrope font-semibold text-xs tracking-[-0.12px] leading-none">
