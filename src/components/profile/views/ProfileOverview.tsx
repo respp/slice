@@ -13,6 +13,12 @@ import {
 import { useJurorStats } from "@/hooks/useJurorStats";
 import { useWithdraw } from "@/hooks/useWithdraw";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { PendingPaymentsDialog } from "@/components/profile/PendingPaymentsDialog";
 import { PendingExecutionsDialog } from "@/components/profile/PendingExecutionsDialog";
 
@@ -20,6 +26,9 @@ export const ProfileOverview = () => {
   const router = useRouter();
   const { stats, rank } = useJurorStats();
   const { withdraw, isWithdrawing, claimableAmount, hasFunds } = useWithdraw();
+
+  // Avatar source (centralized for reuse in modal)
+  const avatarUrl = "/images/profiles-mockup/profile-1.jpg";
 
   return (
     <div className="flex flex-col gap-6 pb-20">
@@ -31,25 +40,48 @@ export const ProfileOverview = () => {
 
       {/* Hero Card */}
       <div className="relative w-full rounded-4xl p-1 bg-linear-to-b from-gray-100 to-white shadow-xl shadow-gray-200/50">
-        {/* Changed gap-6 to gap-4 to pull elements closer */}
         <div className="bg-[#1b1c23] rounded-[30px] p-6 pb-8 text-white flex flex-col items-center gap-4 relative overflow-hidden">
-          {/* Avatar Section */}
+          {/* Avatar Section with Modal */}
           <div className="relative z-10 mt-2">
-            <div className="w-28 h-28 rounded-full p-1 bg-linear-to-br from-[#8c8fff] to-blue-500 shadow-2xl relative">
-              <div className="w-full h-full rounded-full border-[3px] border-[#1b1c23] overflow-hidden bg-[#2c2d33]">
-                <img
-                  src="/images/profiles-mockup/profile-1.jpg"
-                  alt="Juror Avatar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#8c8fff] to-[#7a7de0] text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg border-[3px] border-[#1b1c23] z-20 whitespace-nowrap">
-                {rank}
-              </div>
-            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="outline-none transition-transform hover:scale-105 active:scale-95 cursor-zoom-in rounded-full">
+                  <div className="w-28 h-28 rounded-full p-1 bg-linear-to-br from-[#8c8fff] to-blue-500 shadow-2xl relative">
+                    <div className="w-full h-full rounded-full border-[3px] border-[#1b1c23] overflow-hidden bg-[#2c2d33]">
+                      <img
+                        src={avatarUrl}
+                        alt="Juror Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#8c8fff] to-[#7a7de0] text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-lg border-[3px] border-[#1b1c23] z-20 whitespace-nowrap">
+                      {rank}
+                    </div>
+                  </div>
+                </button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[425px] border-none bg-transparent shadow-none p-0 flex flex-col items-center justify-center gap-4">
+                {/* Hidden title for accessibility checks */}
+                <DialogTitle className="sr-only">Profile Picture</DialogTitle>
+
+                <div className="w-64 h-64 rounded-full p-1 bg-linear-to-br from-[#8c8fff] to-blue-500 shadow-[0_0_50px_rgba(140,143,255,0.3)] animate-in zoom-in-50 duration-300">
+                  <div className="w-full h-full rounded-full border-[6px] border-[#1b1c23] overflow-hidden bg-[#2c2d33]">
+                    <img
+                      src={avatarUrl}
+                      alt="Juror Avatar Large"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+                <div className="text-white font-manrope font-bold text-lg tracking-tight bg-[#1b1c23]/80 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
+                  {rank}
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
-          {/* Name & Lifetime Earnings - Reduced internal gap */}
+          {/* Name & Lifetime Earnings */}
           <div className="flex flex-col items-center gap-1 z-10 w-full">
             <h2 className="font-manrope font-black text-2xl tracking-tight">
               {rank}
@@ -64,7 +96,7 @@ export const ProfileOverview = () => {
             </div>
           </div>
 
-          {/* Stats Grid - Moved closer via parent gap-4 */}
+          {/* Stats Grid */}
           <div className="grid grid-cols-3 divide-x divide-white/10 w-full bg-white/5 border border-white/5 rounded-2xl py-4 backdrop-blur-sm mt-1">
             <StatItem
               icon={<Target className="w-4 h-4 text-emerald-400" />}

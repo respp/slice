@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 import { useMyDisputes } from "@/hooks/useMyDisputes";
@@ -27,7 +27,7 @@ export default function DisputeManagerPage() {
     return disputes.filter(
       (d) =>
         d.claimer.toLowerCase() === address.toLowerCase() ||
-        d.defender.toLowerCase() === address.toLowerCase()
+        d.defender.toLowerCase() === address.toLowerCase(),
     );
   }, [disputes, address]);
 
@@ -107,6 +107,13 @@ const ManagerCaseCard = ({
 }) => {
   const router = useRouter();
 
+  // FIX: Store 'now' in state to ensure purity during render
+  const [now, setNow] = useState(0);
+
+  useEffect(() => {
+    setNow(Date.now());
+  }, []);
+
   // Determine Role
   const isClaimer = dispute.claimer.toLowerCase() === address?.toLowerCase();
   const roleLabel = isClaimer ? "Claimer" : "Defender";
@@ -138,9 +145,9 @@ const ManagerCaseCard = ({
   // Assuming status 1 (Commit) allows evidence. Check your contract logic.
   // Usually evidence is allowed until 'evidenceDeadline'.
   else if (dispute.status === 1 || dispute.status === 2) {
-    // We check current time against evidence deadline (if available in your data)
+    // FIX: Use the state-based 'now' instead of calling Date.now() directly
     const canSubmit =
-      Date.now() / 1000 < (dispute.evidenceDeadline || Infinity);
+      now > 0 && now / 1000 < (dispute.evidenceDeadline || Infinity);
 
     if (canSubmit) {
       ActionBtn = (

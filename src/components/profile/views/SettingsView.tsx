@@ -84,7 +84,7 @@ export const SettingsView = () => {
 
       <div className="text-center mt-4">
         <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">
-          Built for Hackathons
+          Slice - New standard for justice
         </span>
       </div>
     </div>
