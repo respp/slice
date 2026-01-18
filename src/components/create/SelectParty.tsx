@@ -27,7 +27,7 @@ interface Props {
   onChange: (name: string, address: string) => void;
 }
 
-export const PartySelector: React.FC<Props> = ({
+export const SelectParty: React.FC<Props> = ({
   label,
   valueName,
   valueAddress,

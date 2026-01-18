@@ -11,7 +11,7 @@ const AMOUNTS = [1, 5, 10, 20];
 const SLIDER_STYLES =
   "[&_[data-slot=slider-track]]:h-[5px] [&_[data-slot=slider-track]]:bg-[#e7eefb] [&_[data-slot=slider-range]]:bg-gradient-to-r [&_[data-slot=slider-range]]:from-[#8c8fff] [&_[data-slot=slider-range]]:to-[#7eb5fd] [&_[data-slot=slider-thumb]]:h-[14px] [&_[data-slot=slider-thumb]]:w-[14px] [&_[data-slot=slider-thumb]]:border-2 [&_[data-slot=slider-thumb]]:border-[#8c8fff] [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:focus-visible:ring-0 cursor-pointer";
 
-export const AmountSelector: React.FC<AmountSelectorProps> = ({
+export const SelectAmount: React.FC<AmountSelectorProps> = ({
   selectedAmount,
   onAmountChange,
 }) => {

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AmountSelector } from "@/components/category-amount/AmountSelector";
+import { SelectAmount } from "@/components/category-amount/SelectAmount";
 import { SwipeButton } from "@/components/category-amount/SwipeButton";
 import { AlertCircle } from "lucide-react";
 import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
@@ -52,7 +52,7 @@ export default function CategoryAmountPage() {
             </p>
 
             <div className="w-full">
-              <AmountSelector
+              <SelectAmount
                 selectedAmount={selectedAmount}
                 onAmountChange={setSelectedAmount}
               />

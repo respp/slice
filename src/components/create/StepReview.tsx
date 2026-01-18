@@ -1,7 +1,8 @@
 import React from "react";
 import { ShieldAlert, ChevronDown, ChevronUp } from "lucide-react";
 
-import type { StepReviewProps } from "../types";
+
+import {StepReviewProps} from "@/components/create/index";
 
 export const StepReview: React.FC<StepReviewProps> = ({
   data,

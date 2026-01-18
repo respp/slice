@@ -2,11 +2,9 @@
 import { useRouter } from "next/navigation";
 import { ArrowLeft, User, Users, Settings } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ProfileOverview,
-  ContactsView,
-  SettingsView,
-} from "@/components/profile/views";
+import {ContactsView} from "@/components/profile/ContactsView";
+import {SettingsView} from "@/components/profile/SettingsView";
+import {ProfileOverview} from "@/components/profile/ProfileOverview";
 
 export default function ProfilePage() {
   const router = useRouter();

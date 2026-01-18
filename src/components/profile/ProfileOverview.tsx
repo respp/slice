@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { PendingPaymentsDialog } from "@/components/profile/PendingPaymentsDialog";
 import { PendingExecutionsDialog } from "@/components/profile/PendingExecutionsDialog";
-import { AvatarSelector } from "@/components/profile/AvatarSelector";
+import { SelectAvatar } from "@/components/profile/SelectAvatar";
 
 export const ProfileOverview = () => {
   const router = useRouter();
@@ -121,7 +121,7 @@ export const ProfileOverview = () => {
                       </span>
 
                       <div className="w-full bg-black/20 rounded-2xl p-2 inner-shadow">
-                        <AvatarSelector
+                        <SelectAvatar
                           currentAvatar={pendingAvatar}
                           options={availableAvatars}
                           onSelect={(newUrl) => {

@@ -1,7 +1,7 @@
 import React from "react";
 
-import type { StepProps } from "../types";
-import { PartySelector } from "../PartySelector";
+import { SelectParty } from "./SelectParty";
+import {StepProps} from "@/components/create/index";
 
 export const StepParties: React.FC<StepProps> = ({ data, updateField }) => {
   // Wrapper to handle the dual update (Name AND Address)
@@ -37,7 +37,7 @@ export const StepParties: React.FC<StepProps> = ({ data, updateField }) => {
           </h3>
         </div>
 
-        <PartySelector
+        <SelectParty
           label="Select Identity"
           valueName={data.claimerName}
           valueAddress={data.claimerAddress}
@@ -54,7 +54,7 @@ export const StepParties: React.FC<StepProps> = ({ data, updateField }) => {
           <h3 className="text-sm font-extrabold text-[#1b1c23]">Defendant</h3>
         </div>
 
-        <PartySelector
+        <SelectParty
           label="Select Identity"
           valueName={data.defenderName}
           valueAddress={data.defenderAddress}

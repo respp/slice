@@ -10,7 +10,7 @@ interface AvatarSelectorProps {
   onSelect: (url: string) => void;
 }
 
-export const AvatarSelector = ({ currentAvatar, options, onSelect }: AvatarSelectorProps) => {
+export const SelectAvatar = ({ currentAvatar, options, onSelect }: AvatarSelectorProps) => {
   return (
     <div className="grid grid-cols-3 gap-3 p-2">
       {options.map((url, idx) => {
