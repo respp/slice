@@ -4,8 +4,8 @@ import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 import { PaginationDots } from "@/components/dispute-overview/PaginationDots";
-import { useGetDispute } from "@/hooks/useGetDispute";
-import { usePageSwipe } from "@/hooks/usePageSwipe";
+import { useGetDispute } from "@/hooks/disputes/useGetDispute";
+import { usePageSwipe } from "@/hooks/ui/usePageSwipe";
 import { shortenAddress } from "@/util/wallet";
 import { DISPUTE_STATUS } from "@/config/constants";
 import {

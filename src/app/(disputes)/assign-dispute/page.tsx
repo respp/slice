@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAssignDispute } from "@/hooks/useAssignDispute";
+import { useAssignDispute } from "@/hooks/actions/useAssignDispute";
 import { Search, Loader2 } from "lucide-react";
 import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 

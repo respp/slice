@@ -2,8 +2,8 @@ import { useReadContract } from "wagmi";
 import { SLICE_ABI } from "@/config/contracts";
 import { transformDisputeData, type DisputeUI } from "@/util/disputeAdapter";
 import { useState, useEffect } from "react";
-import { useStakingToken } from "./useStakingToken";
-import { useContracts } from "./useContracts";
+import { useStakingToken } from "../core/useStakingToken";
+import { useContracts } from "../core/useContracts";
 
 export function useGetDispute(id: string) {
   const { decimals } = useStakingToken();

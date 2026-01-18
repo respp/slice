@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useWriteContract, usePublicClient } from "wagmi";
 import { uploadFileToIPFS } from "@/util/ipfs";
 import { SLICE_ABI } from "@/config/contracts";
-import { useContracts } from "@/hooks/useContracts";
+import { useContracts } from "@/hooks/core/useContracts";
 import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 import { toast } from "sonner";
 import { UploadCloud, Loader2, ArrowRight } from "lucide-react";

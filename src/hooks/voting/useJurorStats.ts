@@ -1,8 +1,8 @@
 import { useReadContract, useAccount } from "wagmi";
 import { SLICE_ABI } from "@/config/contracts";
-import { useContracts } from "@/hooks/useContracts";
+import { useContracts } from "@/hooks/core/useContracts";
 import { formatUnits } from "viem";
-import { useStakingToken } from "./useStakingToken";
+import { useStakingToken } from "../core/useStakingToken";
 
 export function useJurorStats() {
   const { address } = useAccount();

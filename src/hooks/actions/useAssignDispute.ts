@@ -8,7 +8,7 @@ import {
 import { erc20Abi, parseUnits } from "viem";
 import { SLICE_ABI, getContractsForChain } from "@/config/contracts";
 import { toast } from "sonner";
-import { useStakingToken } from "./useStakingToken";
+import { useStakingToken } from "../core/useStakingToken";
 
 export function useAssignDispute() {
   const [isFinding, setIsFinding] = useState(false);

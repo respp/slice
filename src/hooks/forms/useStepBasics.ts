@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { CreateDisputeForm } from "../components/create/types";
+import type { CreateDisputeForm } from "../../components/create/types";
 
 type TimeUnit = "days" | "hours";
 

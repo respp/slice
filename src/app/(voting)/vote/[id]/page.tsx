@@ -9,9 +9,9 @@ import { PaginationDots } from "@/components/dispute-overview/PaginationDots";
 import { SuccessAnimation } from "@/components/SuccessAnimation";
 import { DisputeCandidateCard } from "@/components/disputes/DisputeCandidateCard";
 import { VsBadge } from "@/components/disputes/VsBadge";
-import { useVote } from "@/hooks/useVote";
-import { usePageSwipe } from "@/hooks/usePageSwipe";
-import { useDisputeParties } from "@/hooks/useDisputeParties";
+import { useVote } from "@/hooks/voting/useVote";
+import { usePageSwipe } from "@/hooks/ui/usePageSwipe";
+import { useDisputeParties } from "@/hooks/disputes/useDisputeParties";
 
 export default function VotePage() {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useWriteContract, usePublicClient, useAccount } from "wagmi";
 import { SLICE_ABI } from "@/config/contracts";
-import { useContracts } from "@/hooks/useContracts";
+import { useContracts } from "@/hooks/core/useContracts";
 import { uploadJSONToIPFS } from "@/util/ipfs";
 import { toast } from "sonner";
 

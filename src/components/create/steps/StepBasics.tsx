@@ -2,7 +2,7 @@ import React from "react";
 import { Users, ChevronDown, ChevronUp, Clock } from "lucide-react";
 
 import type { StepProps } from "../types";
-import { useStepBasics } from "@/hooks/useStepBasics";
+import { useStepBasics } from "@/hooks/forms/useStepBasics";
 
 export const StepBasics: React.FC<StepProps> = ({ data, updateField }) => {
   const {

@@ -12,13 +12,13 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatUnits } from "viem";
-import { useSliceVoting } from "@/hooks/useSliceVoting";
-import { usePayDispute } from "@/hooks/usePayDispute";
+import { useSliceVoting } from "@/hooks/voting/useSliceVoting";
+import { usePayDispute } from "@/hooks/actions/usePayDispute";
 import { getVoteData } from "@/util/votingStorage";
-import { useExecuteRuling } from "@/hooks/useExecuteRuling";
+import { useExecuteRuling } from "@/hooks/actions/useExecuteRuling";
 import { usePublicClient, useAccount, useWriteContract } from "wagmi";
 import { SLICE_ABI } from "@/config/contracts";
-import { useContracts } from "@/hooks/useContracts";
+import { useContracts } from "@/hooks/core/useContracts";
 import { GlobalStateCard } from "@/components/debug/GlobalStateCard";
 import { DisputeInspector } from "@/components/debug/DisputeInspector";
 import { DebugToggle } from "@/components/debug/DebugToggle";

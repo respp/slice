@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useWriteContract, usePublicClient, useAccount } from "wagmi";
 import { parseUnits, erc20Abi, isAddress } from "viem";
 import { toast } from "sonner";
-import { useStakingToken } from "./useStakingToken";
+import { useStakingToken } from "../core/useStakingToken";
 
 export function useSendFunds(onSuccess?: () => void) {
   const { address } = useAccount();

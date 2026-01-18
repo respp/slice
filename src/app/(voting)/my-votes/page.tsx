@@ -14,9 +14,9 @@ import {
   ShieldAlert,
   Zap,
 } from "lucide-react";
-import { useSliceConnect } from "@/hooks/useSliceConnect";
+import { useSliceConnect } from "@/hooks/core/useSliceConnect";
 import { useAccount } from "wagmi";
-import { useMyDisputes } from "@/hooks/useMyDisputes";
+import { useMyDisputes } from "@/hooks/disputes/useMyDisputes";
 
 export default function MyVotesPage() {
   const router = useRouter();

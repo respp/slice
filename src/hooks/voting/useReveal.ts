@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
-import { useContracts } from "@/hooks/useContracts";
-import { useSliceVoting } from "@/hooks/useSliceVoting";
-import { useGetDispute } from "@/hooks/useGetDispute";
+import { useContracts } from "@/hooks/core/useContracts";
+import { useSliceVoting } from "@/hooks/voting/useSliceVoting";
+import { useGetDispute } from "@/hooks/disputes/useGetDispute";
 import { getVoteData } from "@/util/votingStorage";
 
 export function useReveal(disputeId: string) {

@@ -14,7 +14,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 
-import { useCreateDisputeForm } from "@/hooks/useCreateDisputeForm";
+import { useCreateDisputeForm } from "@/hooks/forms/useCreateDisputeForm";
 import { Button } from "@/components/ui/button";
 
 // Import Modular Components

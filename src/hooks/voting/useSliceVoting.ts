@@ -12,9 +12,9 @@ import {
   deriveSaltFromSignature,
   getSaltGenerationMessage,
   recoverVote,
-} from "../util/votingUtils";
+} from "../../util/votingUtils";
 import { useSignMessage } from "wagmi";
-import { saveVoteData, getVoteData } from "../util/votingStorage";
+import { saveVoteData, getVoteData } from "../../util/votingStorage";
 
 export const useSliceVoting = () => {
   const [isProcessing, setIsProcessing] = useState(false);

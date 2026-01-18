@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import { ChevronRight, Search } from "lucide-react";
-import { useAddressBook } from "@/hooks/useAddressBook";
+import { useAddressBook } from "@/hooks/user/useAddressBook";
 import { AddContactDialog } from "@/components/profile/AddContactDialog";
 import { Input } from "@/components/ui/input";
 

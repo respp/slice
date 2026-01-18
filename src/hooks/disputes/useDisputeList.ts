@@ -1,11 +1,11 @@
 import { useReadContract, useReadContracts } from "wagmi";
 import { DISPUTE_STATUS } from "@/config/constants";
 import { SLICE_ABI } from "@/config/contracts";
-import { useContracts } from "@/hooks/useContracts";
+import { useContracts } from "@/hooks/core/useContracts";
 import { transformDisputeData, type DisputeUI } from "@/util/disputeAdapter";
 import { useMemo, useState, useEffect } from "react";
 import { useAccount } from "wagmi";
-import { useStakingToken } from "./useStakingToken";
+import { useStakingToken } from "../core/useStakingToken";
 
 // "juror" = disputes where I am a juror
 // "mine"  = disputes where I am a juror OR a party (Claimer/Defender)

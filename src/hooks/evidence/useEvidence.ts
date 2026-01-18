@@ -1,4 +1,4 @@
-import { useGetDispute } from "@/hooks/useGetDispute";
+import { useGetDispute } from "@/hooks/disputes/useGetDispute";
 import { shortenAddress } from "@/util/wallet";
 
 export type EvidenceRole = "claimant" | "defendant";

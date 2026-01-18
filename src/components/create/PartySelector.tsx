@@ -10,7 +10,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { Contact } from "@/config/contacts";
-import { useAddressBook } from "@/hooks/useAddressBook";
+import { useAddressBook } from "@/hooks/user/useAddressBook";
 import { cn } from "@/lib/utils";
 
 import {

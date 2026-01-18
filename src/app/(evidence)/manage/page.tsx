@@ -3,7 +3,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
-import { useMyDisputes } from "@/hooks/useMyDisputes";
+import { useMyDisputes } from "@/hooks/disputes/useMyDisputes";
 import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 import {
   Plus,

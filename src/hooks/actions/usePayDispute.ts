@@ -8,7 +8,7 @@ import {
 import { parseUnits, erc20Abi } from "viem";
 import { SLICE_ABI, getContractsForChain } from "@/config/contracts";
 import { toast } from "sonner";
-import { useStakingToken } from "./useStakingToken";
+import { useStakingToken } from "../core/useStakingToken";
 
 export function usePayDispute() {
   const { address } = useAccount();

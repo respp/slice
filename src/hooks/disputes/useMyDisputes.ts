@@ -1,9 +1,9 @@
 import { useReadContract, useReadContracts, useAccount } from "wagmi";
 import { SLICE_ABI } from "@/config/contracts";
-import { useContracts } from "@/hooks/useContracts";
+import { useContracts } from "@/hooks/core/useContracts";
 import { transformDisputeData, type DisputeUI } from "@/util/disputeAdapter";
 import { useMemo, useState, useEffect } from "react";
-import { useStakingToken } from "./useStakingToken";
+import { useStakingToken } from "../core/useStakingToken";
 
 export function useMyDisputes() {
   const { address } = useAccount();

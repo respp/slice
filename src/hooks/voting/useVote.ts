@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { useGetDispute } from "@/hooks/useGetDispute";
-import { useSliceVoting } from "@/hooks/useSliceVoting";
+import { useGetDispute } from "@/hooks/disputes/useGetDispute";
+import { useSliceVoting } from "@/hooks/voting/useSliceVoting";
 import { useAccount, useChainId } from "wagmi";
 import { getVoteData } from "@/util/votingStorage";
 import { getContractsForChain } from "@/config/contracts";

@@ -2,10 +2,10 @@
 
 import React, { useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useGetDispute } from "@/hooks/useGetDispute";
-import { useExecuteRuling } from "@/hooks/useExecuteRuling";
+import { useGetDispute } from "@/hooks/disputes/useGetDispute";
+import { useExecuteRuling } from "@/hooks/actions/useExecuteRuling";
 import { SuccessAnimation } from "@/components/SuccessAnimation";
-import { usePageSwipe } from "@/hooks/usePageSwipe";
+import { usePageSwipe } from "@/hooks/ui/usePageSwipe";
 import { Loader2, Wallet, Trophy, Coins, Gavel } from "lucide-react";
 import { toast } from "sonner";
 import { PaginationDots } from "@/components/dispute-overview/PaginationDots";

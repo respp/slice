@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
-import { useAssignDispute } from "@/hooks/useAssignDispute";
-import { useGetDispute } from "@/hooks/useGetDispute";
+import { useAssignDispute } from "@/hooks/actions/useAssignDispute";
+import { useGetDispute } from "@/hooks/disputes/useGetDispute";
 import {
   Loader2,
   ShieldCheck,

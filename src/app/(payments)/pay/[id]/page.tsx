@@ -7,8 +7,8 @@ import { User, Coins } from "lucide-react";
 
 import { DisputeOverviewHeader } from "@/components/dispute-overview/DisputeOverviewHeader";
 import { SwipeButton } from "@/components/category-amount/SwipeButton";
-import { usePayDispute } from "@/hooks/usePayDispute";
-import { useGetDispute } from "@/hooks/useGetDispute";
+import { usePayDispute } from "@/hooks/actions/usePayDispute";
+import { useGetDispute } from "@/hooks/disputes/useGetDispute";
 
 export default function PayDisputePage() {
   const router = useRouter();

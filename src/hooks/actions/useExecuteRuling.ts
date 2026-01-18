@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useWriteContract, usePublicClient } from "wagmi";
 import { SLICE_ABI } from "@/config/contracts";
-import { useContracts } from "@/hooks/useContracts";
+import { useContracts } from "@/hooks/core/useContracts";
 import { toast } from "sonner";
 
 export function useExecuteRuling() {

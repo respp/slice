@@ -12,9 +12,9 @@ import {
   Edit2,
   X,
 } from "lucide-react";
-import { useJurorStats } from "@/hooks/useJurorStats";
-import { useWithdraw } from "@/hooks/useWithdraw";
-import { useUserProfile } from "@/hooks/useUserProfile";
+import { useJurorStats } from "@/hooks/voting/useJurorStats";
+import { useWithdraw } from "@/hooks/actions/useWithdraw";
+import { useUserProfile } from "@/hooks/user/useUserProfile";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

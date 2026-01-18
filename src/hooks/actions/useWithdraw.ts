@@ -8,10 +8,10 @@ import {
   useAccount,
 } from "wagmi";
 import { SLICE_ABI } from "@/config/contracts";
-import { useContracts } from "./useContracts";
+import { useContracts } from "../core/useContracts";
 import { toast } from "sonner";
 import { formatUnits } from "viem";
-import { useStakingToken } from "./useStakingToken";
+import { useStakingToken } from "../core/useStakingToken";
 
 export function useWithdraw() {
   const { address } = useAccount();
