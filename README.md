@@ -32,7 +32,7 @@ The application behaves differently depending on the access point (Subdomain) an
 
 | Platform | Subdomain | Connection Strategy | Auth Type |
 | :--- | :--- | :--- | :--- |
-| **Standard PWA** | `app.` | **Wagmi SW** | Social / Email / Wallet |
+| **Standard PWA** | `app.` | **Wagmi SW** | Social / Email / **Passkey** 🆕 / Wallet |
 | **Base MiniApp** | `base.` | **Wagmi SW** | Coinbase Smart Wallet |
 | **Farcaster** | `frames.` | **Wagmi SW** | Farcaster Identity |
 | **Beexo** | `beexo.` | **Wagmi EOA** | Injected Provider (Beexo) |
@@ -102,6 +102,12 @@ Rename `.env.example` to `.env.local` and add your keys. Note that specific stra
     NEXT_PUBLIC_PRIVY_APP_ID="your_privy_app_id"
     NEXT_PUBLIC_PRIVY_CLIENT_ID="your_privy_client_id"
     
+    # Supabase Auth (For Passkeys & Email Auth) 🆕
+    # https://supabase.com/dashboard/project/_/settings/api
+    NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
+    NEXT_PUBLIC_SUPABASE_ANON_KEY="your_anon_key"
+    SUPABASE_SERVICE_ROLE_KEY="your_service_role_key" # ⚠️ NEVER expose to client
+    
     # Contracts
     NEXT_PUBLIC_BASE_SLICE_CONTRACT="0x..."
     NEXT_PUBLIC_BASE_USDC_CONTRACT="0x..."
@@ -119,8 +125,37 @@ Rename `.env.example` to `.env.local` and add your keys. Note that specific stra
     pnpm run dev
 ```
 
+4. **Set up Supabase (for Passkey Auth):** 🆕
+
+```bash
+    # Apply database migration
+    # Option 1: Via Supabase Dashboard
+    # - Copy contents of supabase/migrations/001_create_user_passkeys.sql
+    # - Paste in SQL Editor and execute
+    
+    # Option 2: Via Supabase CLI
+    supabase db push
+```
+
 * **PWA Mode:** Open `http://localhost:3000`
 * **Miniapp Mode:** Use the native testing environment given by the Miniapp SDK.
+
+---
+
+## 🔐 Authentication Methods
+
+This app supports multiple authentication methods:
+
+### Standard PWA
+- **Email/Password** - Traditional authentication
+- **Magic Link** - Passwordless email authentication
+- **Passkey** 🆕 - Biometric authentication (Touch ID, Face ID, Windows Hello)
+- **Social Login** - via Privy (Google, Twitter, etc.)
+
+### Documentation
+- 📄 **Passkey Implementation**: See `docs/PASSKEY_IMPLEMENTATION.md`
+- 📄 **Testing Guide**: See `docs/PASSKEY_TESTING.md`
+- 📄 **Known Issues**: See `docs/BUGS_AND_EDGE_CASES.md`
 
 ---
 
