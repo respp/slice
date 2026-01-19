@@ -178,4 +178,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 export default func;
 func.tags = ["Slice"];
-func.id = "deploy_slice_fixed_v4";
+func.id = "deploy_slice_v1";
