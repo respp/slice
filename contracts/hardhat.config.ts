@@ -19,6 +19,7 @@ const INFURA_API_KEY: string = vars.get("INFURA_API_KEY", "zzzzzzzzzzzzzzzzzzzzz
 
 // Base network configuration
 const DEPLOYER_PRIVATE_KEY: string = vars.get("DEPLOYER_PRIVATE_KEY", "");
+const DEFENDER_PRIVATE_KEY: string = vars.get("DEFENDER_PRIVATE_KEY", "");
 const BASE_SEPOLIA_RPC_URL: string = vars.get("BASE_SEPOLIA_RPC_URL", "https://sepolia.base.org");
 const BASE_MAINNET_RPC_URL: string = vars.get("BASE_MAINNET_RPC_URL", "https://mainnet.base.org");
 const BASESCAN_API_KEY: string = vars.get("BASESCAN_API_KEY", "");
@@ -85,12 +86,12 @@ const config: HardhatUserConfig = {
     },
     baseSepolia: {
       url: BASE_SEPOLIA_RPC_URL,
-      accounts: DEPLOYER_PRIVATE_KEY ? [DEPLOYER_PRIVATE_KEY] : [],
+      accounts: [DEPLOYER_PRIVATE_KEY, DEFENDER_PRIVATE_KEY].filter(Boolean),
       chainId: 84532,
     },
     base: {
       url: BASE_MAINNET_RPC_URL,
-      accounts: DEPLOYER_PRIVATE_KEY ? [DEPLOYER_PRIVATE_KEY] : [],
+      accounts: [DEPLOYER_PRIVATE_KEY, DEFENDER_PRIVATE_KEY].filter(Boolean),
       chainId: 8453,
     },
   },
