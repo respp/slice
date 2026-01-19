@@ -8,62 +8,75 @@ FHEVM protocol by Zama.
 For detailed instructions see:
 [FHEVM Hardhat Quick Start Tutorial](https://docs.zama.ai/protocol/solidity-guides/getting-started/quick-start-tutorial)
 
-### Prerequisites
+---
 
-- **Node.js**: Version 20 or higher
-- **npm or yarn/pnpm**: Package manager
+## Prerequisites
 
-### Installation
+* **Node.js**: Version 20 or higher
+* **pnpm**: Package manager
 
-1. **Install dependencies**
+Install pnpm if you don’t have it:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install -g pnpm
+```
 
-2. **Set up environment variables**
+---
 
-   ```bash
-   npx hardhat vars set MNEMONIC
+## Installation
 
-   # Set your Infura API key for network access
-   npx hardhat vars set INFURA_API_KEY
+### 1. Install dependencies
 
-   # Optional: Set Etherscan API key for contract verification
-   npx hardhat vars set ETHERSCAN_API_KEY
-   ```
+```bash
+pnpm install
+```
 
-3. **Compile and test**
+### 2. Set up environment variables
 
-   ```bash
-   npm run compile
-   npm run test
-   ```
+```bash
+pnpm hardhat vars set MNEMONIC
 
-4. **Deploy to local network**
+# Set your Infura API key for network access
+pnpm hardhat vars set INFURA_API_KEY
 
-   ```bash
-   # Start a local FHEVM-ready node
-   npx hardhat node
-   # Deploy to local network
-   npx hardhat deploy --network localhost
-   ```
+# Optional: Set Etherscan API key for contract verification
+pnpm hardhat vars set ETHERSCAN_API_KEY
+```
 
-5. **Deploy to Sepolia Testnet**
+### 3. Compile and test
 
-   ```bash
-   # Deploy to Sepolia
-   npx hardhat deploy --network sepolia
-   # Verify contract on Etherscan
-   npx hardhat verify --network sepolia <CONTRACT_ADDRESS>
-   ```
+```bash
+pnpm run compile
+pnpm run test
+```
 
-6. **Test on Sepolia Testnet**
+### 4. Deploy to local network
 
-   ```bash
-   # Once deployed, you can run a simple test on Sepolia.
-   npx hardhat test --network sepolia
-   ```
+```bash
+# Start a local FHEVM-ready node
+pnpm hardhat node
+
+# Deploy to local network
+pnpm hardhat deploy --network localhost
+```
+
+### 5. Deploy to Sepolia Testnet
+
+```bash
+# Deploy to Sepolia
+pnpm hardhat deploy --network sepolia
+
+# Verify contract on Etherscan
+pnpm hardhat verify --network sepolia <CONTRACT_ADDRESS>
+```
+
+### 6. Test on Sepolia Testnet
+
+```bash
+pnpm hardhat test --network sepolia
+```
+
+---
 
 ## 📁 Project Structure
 
@@ -78,32 +91,40 @@ fhevm-hardhat-template/
 └── package.json         # Dependencies and scripts
 ```
 
+---
+
 ## 📜 Available Scripts
 
-| Script             | Description              |
-| ------------------ | ------------------------ |
-| `npm run compile`  | Compile all contracts    |
-| `npm run test`     | Run all tests            |
-| `npm run coverage` | Generate coverage report |
-| `npm run lint`     | Run linting checks       |
-| `npm run clean`    | Clean build artifacts    |
+| Script              | Description              |
+| ------------------- | ------------------------ |
+| `pnpm run compile`  | Compile all contracts    |
+| `pnpm run test`     | Run all tests            |
+| `pnpm run coverage` | Generate coverage report |
+| `pnpm run lint`     | Run linting checks       |
+| `pnpm run clean`    | Clean build artifacts    |
+
+---
 
 ## 📚 Documentation
 
-- [FHEVM Documentation](https://docs.zama.ai/fhevm)
-- [FHEVM Hardhat Setup Guide](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup)
-- [FHEVM Testing Guide](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat/write_test)
-- [FHEVM Hardhat Plugin](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat)
+* [FHEVM Documentation](https://docs.zama.ai/fhevm)
+* [FHEVM Hardhat Setup Guide](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup)
+* [FHEVM Testing Guide](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat/write_test)
+* [FHEVM Hardhat Plugin](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat)
+
+---
 
 ## 📄 License
 
 This project is licensed under the BSD-3-Clause-Clear License. See the [LICENSE](LICENSE) file for details.
 
+---
+
 ## 🆘 Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/zama-ai/fhevm/issues)
-- **Documentation**: [FHEVM Docs](https://docs.zama.ai)
-- **Community**: [Zama Discord](https://discord.gg/zama)
+* **GitHub Issues**: [https://github.com/zama-ai/fhevm/issues](https://github.com/zama-ai/fhevm/issues)
+* **Documentation**: [https://docs.zama.ai](https://docs.zama.ai)
+* **Community**: [https://discord.gg/zama](https://discord.gg/zama)
 
 ---
 
