@@ -56,17 +56,11 @@ export function useDisputeList(
     const contracts = [];
     let idsToFetch: bigint[] = [];
 
-    if (listType === "juror" && jurorDisputeIds) {
-      const ids = Array.from(jurorDisputeIds as bigint[]);
-      for (const id of ids) {
-        contracts.push({
-          address: sliceContract,
-          abi: SLICE_ABI,
-          functionName: "disputes",
-          args: [id],
-        });
-      }
-    } else if (listType === "all" && totalCount) {
+    // REMOVED: Redundant 'if (listType === "juror")' block that was causing duplicates.
+    // We only keep the logic for "all" here because it relies on a count/range
+    // rather than a specific ID list which is handled below.
+
+    if (listType === "all" && totalCount) {
       const total = Number(totalCount);
 
       const start = total;
@@ -146,7 +140,9 @@ export function useDisputeList(
       // --- Filter out Finished disputes if activeOnly is true ---
       if (options?.activeOnly) {
         // Status 3 = Finished/Resolved
-        finalDisputes = finalDisputes.filter((d) => d.status !== DISPUTE_STATUS.RESOLVED);
+        finalDisputes = finalDisputes.filter(
+          (d) => d.status !== DISPUTE_STATUS.RESOLVED,
+        );
       }
 
       setDisputes(finalDisputes);
@@ -154,7 +150,7 @@ export function useDisputeList(
     }
 
     process();
-  }, [results, isMulticallLoading, options?.activeOnly]);
+  }, [results, isMulticallLoading, options?.activeOnly, decimals]);
 
   return { disputes, isLoading: isMulticallLoading || isProcessing, refetch };
 }

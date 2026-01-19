@@ -15,7 +15,7 @@ export const NetworkDebugger = () => {
   if (!address) return null;
 
   return (
-    <div className="fixed bottom-18 right-6 p-4 bg-black/90 text-white text-[10px] font-mono rounded-2xl z-[9999] border border-white/10 shadow-2xl backdrop-blur-md w-64 animate-in fade-in slide-in-from-bottom-2">
+    <div className="fixed bottom-18 right-6 p-4 bg-black/90 text-white text-[10px] font-mono rounded-2xl z-9999 border border-white/10 shadow-2xl backdrop-blur-md w-64 animate-in fade-in slide-in-from-bottom-2">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-bold text-indigo-400 flex items-center gap-2">
           <span className="relative flex h-2 w-2">

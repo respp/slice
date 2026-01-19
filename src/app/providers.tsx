@@ -1,9 +1,9 @@
 "use client";
 
-import { ReactNode } from "react";
+import {ReactNode, useEffect} from "react";
 import { Tenant } from "@/config/tenant";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
+import {useAccount, useSwitchChain, WagmiProvider} from "wagmi";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { WagmiProvider as PrivyWagmiProvider } from "@privy-io/wagmi";
 import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
@@ -63,4 +63,21 @@ export default function ContextProvider({ children, tenant, initialState }: Prop
       </QueryClientProvider>
     </PrivyProvider>
   );
+}
+export function ChainGuard() {
+  const { chainId, isConnected } = useAccount();
+  const { switchChain } = useSwitchChain();
+
+  useEffect(() => {
+    // Only enforce in dev mode to avoid annoying users in prod
+    if (process.env.NEXT_PUBLIC_APP_ENV !== "development") return;
+
+    // If connected, but to the wrong chain (e.g., 31337 instead of 84532)
+    if (isConnected && chainId && chainId !== defaultChain.id) {
+      console.log(`[ChainGuard] Mismatch detected. Switching from ${chainId} to ${defaultChain.id}`);
+      switchChain({ chainId: defaultChain.id });
+    }
+  }, [chainId, isConnected, switchChain]);
+
+  return null;
 }
